@@ -49,6 +49,12 @@
     --tag-options-bg: rgba(99, 102, 241, 0.14);
     --tag-options-border: rgba(99, 102, 241, 0.34);
     --tag-options-color: #4338ca;
+
+    --hljs-key: #1d4ed8;
+    --hljs-string: #16a34a;
+    --hljs-number: #ca8a04;
+    --hljs-boolean: #db2777;
+    --hljs-null: #9333ea;
 }
 
 :root[data-theme="dark"] {
@@ -102,11 +108,16 @@
     --tag-options-bg: rgba(129, 140, 248, 0.25);
     --tag-options-border: rgba(129, 140, 248, 0.45);
     --tag-options-color: #c7d2fe;
+
+    --hljs-key: #93c5fd;
+    --hljs-string: #34d399;
+    --hljs-number: #facc15;
+    --hljs-boolean: #f472b6;
+    --hljs-null: #c4b5fd;
 }
 
-*,
-*::before,
-*::after {
+:root,
+:root * {
     box-sizing: border-box;
 }
 
@@ -436,8 +447,45 @@ a {
     padding: 1rem;
     overflow-x: auto;
     font-size: 0.85rem;
-    line-height: 1.5;
+    line-height: 1.55;
     transition: background-color 0.35s ease, border-color 0.35s ease;
+    color: var(--text);
+    font-family: "JetBrains Mono", "Fira Mono", monospace;
+}
+
+.code-block code {
+    display: block;
+    white-space: pre;
+}
+
+.code-block code.hljs {
+    background: transparent;
+    color: var(--text);
+    padding: 0;
+}
+
+.code-block .hljs-attr {
+    color: var(--hljs-key);
+    font-weight: 600;
+}
+
+.code-block .hljs-string {
+    color: var(--hljs-string);
+}
+
+.code-block .hljs-number {
+    color: var(--hljs-number);
+}
+
+.code-block .hljs-literal {
+    color: var(--hljs-boolean);
+    font-style: italic;
+}
+
+.code-block .hljs-punctuation,
+.code-block .hljs-operator,
+.code-block .hljs-symbol {
+    color: var(--muted);
 }
 
 .detail {

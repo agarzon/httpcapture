@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted, onBeforeUnmount, computed, watch } = Vue;
+const { createApp, ref, computed, onMounted, onBeforeUnmount, watch, nextTick } = Vue;
 
 createApp({
     setup() {
@@ -12,6 +12,7 @@ createApp({
         const themeStorageKey = 'httpcapture:theme';
         const theme = ref('system');
         const systemTheme = ref('light');
+
         const resolvedTheme = computed(() => (theme.value === 'system' ? systemTheme.value : theme.value));
         const resolvedThemeLabel = computed(() => (resolvedTheme.value === 'dark' ? 'Dark' : 'Light'));
 
@@ -35,9 +36,7 @@ createApp({
 
         watch(
             () => [resolvedTheme.value, theme.value],
-            () => {
-                applyTheme();
-            },
+            () => applyTheme(),
             { immediate: true }
         );
 
@@ -78,7 +77,7 @@ createApp({
                 try {
                     const payload = await response.json();
                     detail = payload.message || response.statusText;
-                } catch (e) {
+                } catch (error) {
                     detail = response.statusText;
                 }
 
@@ -191,22 +190,87 @@ createApp({
                     dateStyle: 'medium',
                     timeStyle: 'medium',
                 }).format(new Date(value));
-            } catch (e) {
+            } catch (error) {
                 return value;
             }
         };
 
-        const pretty = (value) => {
-            if (!value || Object.keys(value).length === 0) {
-                return '(empty)';
+        const formatDisplay = (value) => {
+            if (value === null || value === undefined) {
+                return {
+                    isJson: false,
+                    text: '(empty)',
+                };
             }
 
-            try {
-                return JSON.stringify(value, null, 2);
-            } catch (e) {
-                return String(value);
+            if (typeof value === 'string') {
+                const trimmed = value.trim();
+                if (trimmed === '') {
+                    return {
+                        isJson: false,
+                        text: '(empty)',
+                    };
+                }
+
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    return {
+                        isJson: true,
+                        text: JSON.stringify(parsed, null, 2),
+                    };
+                } catch (error) {
+                    return {
+                        isJson: false,
+                        text: value,
+                    };
+                }
             }
+
+            if (typeof value === 'object') {
+                try {
+                    return {
+                        isJson: true,
+                        text: JSON.stringify(value, null, 2),
+                    };
+                } catch (error) {
+                    return {
+                        isJson: false,
+                        text: String(value),
+                    };
+                }
+            }
+
+            return {
+                isJson: false,
+                text: String(value),
+            };
         };
+
+        const formattedHeaders = computed(() => formatDisplay(selected.value?.headers ?? null));
+        const formattedQuery = computed(() => formatDisplay(selected.value?.query_params ?? null));
+        const formattedBody = computed(() => formatDisplay(selected.value?.body ?? null));
+
+        const highlightJsonBlocks = () => {
+            if (typeof window === 'undefined' || typeof window.hljs === 'undefined') {
+                return;
+            }
+
+            nextTick(() => {
+                const blocks = document.querySelectorAll('[data-highlight-json]');
+                blocks.forEach((block) => {
+                    if (block.dataset.highlighted) {
+                        block.innerHTML = block.textContent ?? '';
+                        block.removeAttribute('data-highlighted');
+                        block.classList.remove('hljs');
+                    }
+                    window.hljs.highlightElement(block);
+                });
+            });
+        };
+
+        watch([formattedHeaders, formattedQuery, formattedBody], () => {
+            highlightJsonBlocks();
+        }, { immediate: true });
 
         onMounted(async () => {
             if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
@@ -228,8 +292,13 @@ createApp({
                 }
             }
 
+            if (typeof window !== 'undefined' && window.hljs) {
+                window.hljs.configure({ ignoreUnescapedHTML: true });
+            }
+
             applyTheme();
             await refresh();
+            highlightJsonBlocks();
             intervalId = window.setInterval(fetchRequests, 10_000);
         });
 
@@ -257,7 +326,9 @@ createApp({
             deleteOne,
             deleteAll,
             formatDate,
-            pretty,
+            formattedHeaders,
+            formattedQuery,
+            formattedBody,
         };
     },
 }).mount('#app');

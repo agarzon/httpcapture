@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>httpcapture</title>
         <link rel="stylesheet" href="/assets/app.css" />
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
         <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
         <script type="module" defer src="/assets/app.js"></script>
     </head>
@@ -131,13 +133,37 @@
                             </dl>
 
                             <h3>Headers</h3>
-                            <pre class="code-block">{{ pretty(selected.headers) }}</pre>
+                            <pre class="code-block">
+                                <code
+                                    v-if="formattedHeaders.isJson"
+                                    class="language-json"
+                                    data-highlight-json
+                                    v-text="formattedHeaders.text"
+                                ></code>
+                                <code v-else class="language-plaintext" v-text="formattedHeaders.text"></code>
+                            </pre>
 
                             <h3>Query Parameters</h3>
-                            <pre class="code-block">{{ pretty(selected.query_params) }}</pre>
+                            <pre class="code-block">
+                                <code
+                                    v-if="formattedQuery.isJson"
+                                    class="language-json"
+                                    data-highlight-json
+                                    v-text="formattedQuery.text"
+                                ></code>
+                                <code v-else class="language-plaintext" v-text="formattedQuery.text"></code>
+                            </pre>
 
                             <h3>Body</h3>
-                            <pre class="code-block">{{ selected.body || '(empty)' }}</pre>
+                            <pre class="code-block">
+                                <code
+                                    v-if="formattedBody.isJson"
+                                    class="language-json"
+                                    data-highlight-json
+                                    v-text="formattedBody.text"
+                                ></code>
+                                <code v-else class="language-plaintext" v-text="formattedBody.text"></code>
+                            </pre>
                         </article>
                     </div>
                 </section>
