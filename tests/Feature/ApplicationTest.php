@@ -145,4 +145,29 @@ final class ApplicationTest extends TestCase
         $jsonBody = json_decode($payload['data']['body'], true, 512, JSON_THROW_ON_ERROR);
         $this->assertSame('30', $jsonBody['form']['age']);
     }
+
+    public function testPaginationMetadata(): void
+    {
+        $app = new Application($this->databasePath);
+
+        foreach (range(1, 3) as $i) {
+            $app->handle([
+                'REQUEST_METHOD' => 'POST',
+                'REQUEST_URI' => '/page-test-' . $i,
+                'HTTP_HOST' => 'example.test',
+            ], 'body-' . $i);
+        }
+
+        $listResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests?page=1&per_page=2',
+        ], '', ['page' => '1', 'per_page' => '2']);
+
+        $this->assertSame(200, $listResponse->getStatusCode());
+        $payload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(2, count($payload['data']));
+        $this->assertSame(3, $payload['meta']['total']);
+        $this->assertSame(2, $payload['meta']['last_page']);
+        $this->assertSame(2, $payload['meta']['per_page']);
+    }
 }

@@ -20,17 +20,26 @@ final class RequestRepository
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function all(int $limit = 200): array
+    public function all(int $limit = 10, int $offset = 0): array
     {
         $statement = $this->pdo->prepare(
-            'SELECT * FROM requests ORDER BY id DESC LIMIT :limit;'
+            'SELECT * FROM requests ORDER BY id DESC LIMIT :limit OFFSET :offset;'
         );
         $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
         $statement->execute();
 
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map([$this, 'mapRow'], $results ?: []);
+    }
+
+    public function count(): int
+    {
+        $statement = $this->pdo->query('SELECT COUNT(*) as aggregate FROM requests;');
+        $result = $statement ? $statement->fetch(PDO::FETCH_ASSOC) : null;
+
+        return (int) ($result['aggregate'] ?? 0);
     }
 
     /**

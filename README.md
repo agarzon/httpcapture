@@ -29,6 +29,8 @@ Original IP detection prioritises `X-Forwarded-For`, falling back to `REMOTE_ADD
 2. Run tests: `docker compose exec app composer test`
 3. Lint code: `docker compose exec app composer lint`
 
+List endpoints accept `page` (1-based) and `per_page` (max 100) query parameters; the UI shows 10 per page by default with pager buttons at the top of the list.
+
 ## Configuration
 - Captured requests persist inside the Docker volume `storage_data`; remove it with `docker compose down -v` when you need a clean slate.
 - UI refreshes the request list every 10 seconds; adjust polling in `public/assets/app.js` if needed.

@@ -89,6 +89,17 @@
                         </div>
                     </header>
                     <div class="panel__body">
+                        <div class="paginator" v-if="requests.length || total">
+                            <button type="button" class="btn paginator__btn" @click="goToPreviousPage" :disabled="!canGoPrevious">
+                                ◀ Prev
+                            </button>
+                            <span class="paginator__status">
+                                Page {{ page }} / {{ lastPage }} · Showing {{ requests.length }} of {{ total }}
+                            </span>
+                            <button type="button" class="btn paginator__btn" @click="goToNextPage" :disabled="!canGoNext">
+                                Next ▶
+                            </button>
+                        </div>
                         <p class="empty" v-if="!requests.length && !loading">No requests captured yet.</p>
                         <ul class="request-list">
                             <li
@@ -169,7 +180,7 @@
                 </section>
             </main>
             <footer class="layout__footer">
-                <small>Send requests to this container on port 8080. UI refreshes every 10s.</small>
+                <small></small>
             </footer>
             <div v-if="error" class="toast toast--error">
                 <p>{{ error }}</p>

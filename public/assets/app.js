@@ -1,4 +1,5 @@
 const { createApp, ref, computed, onMounted, onBeforeUnmount, watch, nextTick } = Vue;
+const POLLING_INTERVAL_MS = 5_000;
 
 createApp({
     setup() {
@@ -6,6 +7,10 @@ createApp({
         const selected = ref(null);
         const loading = ref(false);
         const error = ref('');
+        const page = ref(1);
+        const perPage = ref(10);
+        const total = ref(0);
+        const lastPage = ref(1);
         let intervalId = null;
         let removeSystemListener = null;
 
@@ -89,8 +94,19 @@ createApp({
 
         const fetchRequests = async () => {
             try {
-                const payload = await requestJson('/api/requests');
+                const url = new URL('/api/requests', window.location.origin);
+                url.searchParams.set('page', String(page.value));
+                url.searchParams.set('per_page', String(perPage.value));
+
+                const payload = await requestJson(url.toString());
                 requests.value = payload.data || [];
+                total.value = payload.meta?.total ?? requests.value.length;
+                lastPage.value = payload.meta?.last_page ?? Math.max(1, Math.ceil((total.value || 1) / perPage.value));
+
+                if (page.value > lastPage.value && lastPage.value > 0) {
+                    page.value = lastPage.value;
+                    return fetchRequests();
+                }
 
                 if (!requests.value.length) {
                     selected.value = null;
@@ -172,6 +188,7 @@ createApp({
             loading.value = true;
             try {
                 await requestJson('/api/requests', { method: 'DELETE' });
+                page.value = 1;
                 await fetchRequests();
             } catch (err) {
                 setError(err.message);
@@ -272,6 +289,22 @@ createApp({
             highlightJsonBlocks();
         }, { immediate: true });
 
+        const canGoPrevious = computed(() => page.value > 1);
+        const canGoNext = computed(() => page.value < lastPage.value);
+
+        const changePage = async (nextPage) => {
+            const target = Math.min(Math.max(1, nextPage), lastPage.value || 1);
+            if (target === page.value) {
+                return;
+            }
+
+            page.value = target;
+            await fetchRequests();
+        };
+
+        const goToPreviousPage = () => changePage(page.value - 1);
+        const goToNextPage = () => changePage(page.value + 1);
+
         onMounted(async () => {
             if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
                 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -299,7 +332,7 @@ createApp({
             applyTheme();
             await refresh();
             highlightJsonBlocks();
-            intervalId = window.setInterval(fetchRequests, 10_000);
+            intervalId = window.setInterval(fetchRequests, POLLING_INTERVAL_MS);
         });
 
         onBeforeUnmount(() => {
@@ -317,6 +350,14 @@ createApp({
             selected,
             loading,
             error,
+            page,
+            perPage,
+            total,
+            lastPage,
+            canGoPrevious,
+            canGoNext,
+            goToPreviousPage,
+            goToNextPage,
             theme,
             resolvedTheme,
             resolvedThemeLabel,

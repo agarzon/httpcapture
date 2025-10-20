@@ -16,12 +16,23 @@ final class RequestsController
 
     public function index(Request $request): Response
     {
-        $items = $this->repository->all();
+        $query = $request->getQueryParams();
+        $page = isset($query['page']) ? max(1, (int) $query['page']) : 1;
+        $perPage = isset($query['per_page']) ? max(1, min((int) $query['per_page'], 100)) : 10;
+        $offset = ($page - 1) * $perPage;
+
+        $total = $this->repository->count();
+        $items = $this->repository->all($perPage, $offset);
+        $lastPage = (int) max(1, (int) ceil($total / $perPage));
 
         return Response::json([
             'data' => $items,
             'meta' => [
                 'count' => count($items),
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'last_page' => $lastPage,
             ],
         ]);
     }

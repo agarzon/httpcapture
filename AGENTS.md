@@ -5,6 +5,7 @@ Keep the PHP bootstrap in `app.php` focused on wiring and request dispatch. Hous
 
 ## Build, Test, and Development Commands
 Use Docker for all local work. `docker compose up --build` builds the PHP runtime image and starts the single `app` service (PHP built-in server on port 8080). `docker compose exec app composer install` installs Composer dependencies once you add or update them. `docker compose exec app composer test` runs the PHPUnit suite, while `docker compose exec app composer lint` executes `phpcs`. `docker compose down -v` resets the container and drops the `storage_data` volume.
+The UI lists 10 captures per page by default; adjust `perPage` in `public/assets/app.js` to change or expose a selector.
 
 ## Coding Style & Naming Conventions
 Follow PSR-12 for PHP: 4-space indentation, strict types, and namespaces that mirror folder paths (e.g., `HttpCapture\Controller\CaptureController`). Stick to small, focused classes—push request parsing into `src/Http` and persistence concerns into `src/Persistence`. Keep UI scripts modular in `public/assets/app.js` and use SCSS-like naming conventions in `app.css`. If you add migrations or seed data, collect them under `database/` with snake_case filenames. Run `composer lint` (phpcs) before committing.
