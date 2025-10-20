@@ -78,4 +78,37 @@ final class ApplicationTest extends TestCase
         $payload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $this->assertSame(0, $payload['meta']['count']);
     }
+
+    public function testDeleteAllTruncatesDatabase(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $firstResponse = $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/capture-one',
+            'HTTP_HOST' => 'example.test',
+        ], 'first');
+
+        $firstPayload = json_decode($firstResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(201, $firstResponse->getStatusCode());
+        $this->assertSame(1, $firstPayload['data']['id']);
+
+        $deleteResponse = $app->handle([
+            'REQUEST_METHOD' => 'DELETE',
+            'REQUEST_URI' => '/api/requests',
+        ], '');
+        $deletePayload = json_decode($deleteResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(200, $deleteResponse->getStatusCode());
+        $this->assertSame('All requests cleared', $deletePayload['message']);
+
+        $secondResponse = $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/capture-two',
+            'HTTP_HOST' => 'example.test',
+        ], 'second');
+
+        $secondPayload = json_decode($secondResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(201, $secondResponse->getStatusCode());
+        $this->assertSame(1, $secondPayload['data']['id']);
+    }
 }

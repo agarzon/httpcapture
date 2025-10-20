@@ -99,6 +99,8 @@ final class RequestRepository
     public function deleteAll(): void
     {
         $this->pdo->exec('DELETE FROM requests;');
+        $this->pdo->exec("DELETE FROM sqlite_sequence WHERE name = 'requests';");
+        $this->pdo->exec('VACUUM;');
     }
 
     /**

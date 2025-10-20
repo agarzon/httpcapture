@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
+const { createApp, ref, onMounted, onBeforeUnmount, computed, watch } = Vue;
 
 createApp({
     setup() {
@@ -7,6 +7,55 @@ createApp({
         const loading = ref(false);
         const error = ref('');
         let intervalId = null;
+        let removeSystemListener = null;
+
+        const themeStorageKey = 'httpcapture:theme';
+        const theme = ref('system');
+        const systemTheme = ref('light');
+        const resolvedTheme = computed(() => (theme.value === 'system' ? systemTheme.value : theme.value));
+        const resolvedThemeLabel = computed(() => (resolvedTheme.value === 'dark' ? 'Dark' : 'Light'));
+
+        const applyTheme = () => {
+            if (typeof document === 'undefined') {
+                return;
+            }
+
+            const root = document.documentElement;
+            root.dataset.theme = resolvedTheme.value;
+            root.dataset.themeSource = theme.value;
+            root.style.setProperty('color-scheme', resolvedTheme.value);
+        };
+
+        if (typeof window !== 'undefined') {
+            const savedTheme = window.localStorage.getItem(themeStorageKey);
+            if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') {
+                theme.value = savedTheme;
+            }
+        }
+
+        watch(
+            () => [resolvedTheme.value, theme.value],
+            () => {
+                applyTheme();
+            },
+            { immediate: true }
+        );
+
+        watch(theme, (value) => {
+            if (typeof window !== 'undefined') {
+                window.localStorage.setItem(themeStorageKey, value);
+            }
+        });
+
+        const setTheme = (value) => {
+            if (value === theme.value) {
+                return;
+            }
+
+            if (value === 'light' || value === 'dark' || value === 'system') {
+                theme.value = value;
+            }
+        };
 
         const setError = (message) => {
             error.value = message;
@@ -160,6 +209,26 @@ createApp({
         };
 
         onMounted(async () => {
+            if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                const updateSystemTheme = (event) => {
+                    systemTheme.value = event.matches ? 'dark' : 'light';
+                };
+
+                updateSystemTheme(mediaQuery);
+
+                if (typeof mediaQuery.addEventListener === 'function') {
+                    const listener = (event) => updateSystemTheme(event);
+                    mediaQuery.addEventListener('change', listener);
+                    removeSystemListener = () => mediaQuery.removeEventListener('change', listener);
+                } else if (typeof mediaQuery.addListener === 'function') {
+                    const listener = (event) => updateSystemTheme(event);
+                    mediaQuery.addListener(listener);
+                    removeSystemListener = () => mediaQuery.removeListener(listener);
+                }
+            }
+
+            applyTheme();
             await refresh();
             intervalId = window.setInterval(fetchRequests, 10_000);
         });
@@ -168,6 +237,10 @@ createApp({
             if (intervalId) {
                 window.clearInterval(intervalId);
             }
+
+            if (typeof removeSystemListener === 'function') {
+                removeSystemListener();
+            }
         });
 
         return {
@@ -175,6 +248,10 @@ createApp({
             selected,
             loading,
             error,
+            theme,
+            resolvedTheme,
+            resolvedThemeLabel,
+            setTheme,
             refresh,
             select,
             deleteOne,

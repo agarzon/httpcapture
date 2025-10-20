@@ -11,8 +11,67 @@
     <body>
         <div id="app" class="layout">
             <header class="layout__header">
-                <h1>httpcapture</h1>
-                <p>Inspect inbound webhooks and HTTP calls in real-time.</p>
+                <div class="layout__brand">
+                    <h1>httpcapture</h1>
+                    <p>Inspect inbound webhooks and HTTP calls in real-time.</p>
+                </div>
+                <div class="theme-toggle" role="radiogroup" aria-label="Theme selector">
+                    <div class="theme-toggle__controls">
+                        <button
+                            type="button"
+                            :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'light' }]"
+                            role="radio"
+                            :aria-checked="theme === 'light'"
+                            @click="setTheme('light')"
+                            title="Use light theme"
+                        >
+                            <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="m4.93 4.93 1.41 1.41"></path>
+                                <path d="m17.66 17.66 1.41 1.41"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="m6.34 17.66-1.41 1.41"></path>
+                                <path d="m19.07 4.93-1.41 1.41"></path>
+                            </svg>
+                            <span>Light</span>
+                        </button>
+                        <button
+                            type="button"
+                            :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'dark' }]"
+                            role="radio"
+                            :aria-checked="theme === 'dark'"
+                            @click="setTheme('dark')"
+                            title="Use dark theme"
+                        >
+                            <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                            <span>Dark</span>
+                        </button>
+                        <button
+                            type="button"
+                            :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'system' }]"
+                            role="radio"
+                            :aria-checked="theme === 'system'"
+                            @click="setTheme('system')"
+                            title="Follow system theme"
+                        >
+                            <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            <span>System</span>
+                        </button>
+                    </div>
+                    <span class="theme-toggle__status" aria-live="polite">
+                        <span class="theme-toggle__status-dot" :class="`theme-toggle__status-dot--${resolvedTheme}`"></span>
+                        {{ resolvedThemeLabel }} mode
+                    </span>
+                </div>
             </header>
             <main class="layout__main">
                 <section class="panel panel--list">
