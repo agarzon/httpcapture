@@ -11,93 +11,118 @@
         <script type="module" defer src="/assets/app.js"></script>
     </head>
     <body>
-        <div id="app" class="layout">
-            <header class="layout__header">
-                <div class="layout__brand">
-                    <h1>httpcapture</h1>
-                    <p>Inspect inbound webhooks and HTTP calls in real-time.</p>
+        <div id="app" class="app-shell">
+            <header class="app-header">
+                <div class="brand">
+                    <h1 class="brand__title">httpcapture</h1>
+                    <p class="brand__subtitle">Inspect inbound webhooks and HTTP calls in real-time.</p>
                 </div>
-                <div class="theme-toggle" role="radiogroup" aria-label="Theme selector">
-                    <div class="theme-toggle__controls">
-                        <button
-                            type="button"
-                            :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'light' }]"
-                            role="radio"
-                            :aria-checked="theme === 'light'"
-                            @click="setTheme('light')"
-                            title="Use light theme"
-                        >
-                            <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="4"></circle>
-                                <path d="M12 2v2"></path>
-                                <path d="M12 20v2"></path>
-                                <path d="m4.93 4.93 1.41 1.41"></path>
-                                <path d="m17.66 17.66 1.41 1.41"></path>
-                                <path d="M2 12h2"></path>
-                                <path d="M20 12h2"></path>
-                                <path d="m6.34 17.66-1.41 1.41"></path>
-                                <path d="m19.07 4.93-1.41 1.41"></path>
-                            </svg>
-                            <span>Light</span>
-                        </button>
-                        <button
-                            type="button"
-                            :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'dark' }]"
-                            role="radio"
-                            :aria-checked="theme === 'dark'"
-                            @click="setTheme('dark')"
-                            title="Use dark theme"
-                        >
-                            <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                            </svg>
-                            <span>Dark</span>
-                        </button>
-                        <button
-                            type="button"
-                            :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'system' }]"
-                            role="radio"
-                            :aria-checked="theme === 'system'"
-                            @click="setTheme('system')"
-                            title="Follow system theme"
-                        >
-                            <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-                                <line x1="8" y1="21" x2="16" y2="21"></line>
-                                <line x1="12" y1="17" x2="12" y2="21"></line>
-                            </svg>
-                            <span>System</span>
-                        </button>
-                    </div>
-                    <span class="theme-toggle__status" aria-live="polite">
-                        <span class="theme-toggle__status-dot" :class="`theme-toggle__status-dot--${resolvedTheme}`"></span>
-                        {{ resolvedThemeLabel }} mode
-                    </span>
-                </div>
-            </header>
-            <main class="layout__main">
-                <section class="panel panel--list">
-                    <header class="panel__header">
-                        <h2>Captured Requests</h2>
-                        <div class="panel__actions">
-                            <button type="button" class="btn" @click="refresh" :disabled="loading">
-                                Refresh
+                <div class="header-actions">
+                    <div class="theme-toggle" role="radiogroup" aria-label="Theme selector">
+                        <div class="theme-toggle__controls">
+                            <button
+                                type="button"
+                                :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'light' }]"
+                                role="radio"
+                                :aria-checked="theme === 'light'"
+                                @click="setTheme('light')"
+                                title="Use light theme"
+                            >
+                                <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="4"></circle>
+                                    <path d="M12 2v2"></path>
+                                    <path d="M12 20v2"></path>
+                                    <path d="m4.93 4.93 1.41 1.41"></path>
+                                    <path d="m17.66 17.66 1.41 1.41"></path>
+                                    <path d="M2 12h2"></path>
+                                    <path d="M20 12h2"></path>
+                                    <path d="m6.34 17.66-1.41 1.41"></path>
+                                    <path d="m19.07 4.93-1.41 1.41"></path>
+                                </svg>
+                                <span>Light</span>
                             </button>
-                            <button type="button" class="btn btn--danger" @click="deleteAll" :disabled="loading || !requests.length">
-                                Delete All
+                            <button
+                                type="button"
+                                :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'dark' }]"
+                                role="radio"
+                                :aria-checked="theme === 'dark'"
+                                @click="setTheme('dark')"
+                                title="Use dark theme"
+                            >
+                                <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                                <span>Dark</span>
+                            </button>
+                            <button
+                                type="button"
+                                :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'system' }]"
+                                role="radio"
+                                :aria-checked="theme === 'system'"
+                                @click="setTheme('system')"
+                                title="Follow system theme"
+                            >
+                                <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                                <span>System</span>
                             </button>
                         </div>
-                    </header>
+                        <span class="theme-toggle__status" aria-live="polite">
+                            <span class="theme-toggle__status-dot" :class="`theme-toggle__status-dot--${resolvedTheme}`"></span>
+                            {{ resolvedThemeLabel }} mode
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="app-main">
+                <aside class="panel panel--list">
+                    <div class="panel__heading">
+                        <div>
+                            <h2 class="panel__title">Captured Requests</h2>
+                            <p class="panel__subtitle">{{ total }} captured</p>
+                        </div>
+                        <div class="panel__actions">
+                            <button type="button" class="btn btn--ghost" @click="refresh" :disabled="loading">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 4 23 10 17 10"></polyline>
+                                    <polyline points="1 20 1 14 7 14"></polyline>
+                                    <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
+                                    <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
+                                </svg>
+                                <span>Refresh</span>
+                            </button>
+                            <button type="button" class="btn btn--danger" @click="deleteAll" :disabled="loading || !requests.length">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                                    <path d="M10 11v6"></path>
+                                    <path d="M14 11v6"></path>
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                                </svg>
+                                <span>Delete All</span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="panel__body">
                         <div class="paginator" v-if="requests.length || total">
                             <button type="button" class="btn paginator__btn" @click="goToPreviousPage" :disabled="!canGoPrevious">
-                                ◀ Prev
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                                <span>Prev</span>
                             </button>
                             <span class="paginator__status">
                                 Page {{ page }} / {{ lastPage }} · Showing {{ requests.length }} of {{ total }}
                             </span>
                             <button type="button" class="btn paginator__btn" @click="goToNextPage" :disabled="!canGoNext">
-                                Next ▶
+                                <span>Next</span>
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
                             </button>
                         </div>
                         <p class="empty" v-if="!requests.length && !loading">No requests captured yet.</p>
@@ -113,75 +138,97 @@
                                     <p class="request-path">{{ item.path }}</p>
                                     <p class="request-time">{{ formatDate(item.created_at) }}</p>
                                 </div>
+                                <svg class="icon icon--chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
                             </li>
                         </ul>
                     </div>
-                </section>
+                </aside>
+
                 <section class="panel panel--detail">
-                    <header class="panel__header">
-                        <h2>Details</h2>
-                        <div class="panel__actions">
-                            <button type="button" class="btn btn--danger" @click="deleteOne" :disabled="loading || !selected">
-                                Delete
-                            </button>
+                    <div class="panel__heading panel__heading--detail">
+                        <div>
+                            <h2 class="panel__title">Details</h2>
+                            <p class="panel__subtitle" v-if="selected">Captured {{ formatDate(selected.created_at) }}</p>
                         </div>
-                    </header>
+                        <button type="button" class="btn btn--danger" @click="deleteOne" :disabled="loading || !selected">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                                <path d="M10 11v6"></path>
+                                <path d="M14 11v6"></path>
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                            </svg>
+                            <span>Delete</span>
+                        </button>
+                    </div>
                     <div class="panel__body panel__body--scroll">
                         <p class="empty" v-if="!selected && !loading">Select a request to inspect payloads, headers, and metadata.</p>
                         <article v-if="selected" class="detail">
-                            <h3>Overview</h3>
-                            <dl class="detail__grid">
-                                <dt>Method</dt>
-                                <dd>{{ selected.method }}</dd>
-                                <dt>Path</dt>
-                                <dd>{{ selected.path }}</dd>
-                                <dt>Captured</dt>
-                                <dd>{{ formatDate(selected.created_at) }}</dd>
-                                <dt>Client IP</dt>
-                                <dd>{{ selected.client_ip }}</dd>
-                                <dt>Full URL</dt>
-                                <dd class="break">{{ selected.full_url }}</dd>
-                            </dl>
+                            <section class="panel__section">
+                                <h3>Overview</h3>
+                                <dl class="detail__grid">
+                                    <dt>Method</dt>
+                                    <dd>{{ selected.method }}</dd>
+                                    <dt>Path</dt>
+                                    <dd>{{ selected.path }}</dd>
+                                    <dt>Captured</dt>
+                                    <dd>{{ formatDate(selected.created_at) }}</dd>
+                                    <dt>Client IP</dt>
+                                    <dd>{{ selected.client_ip }}</dd>
+                                    <dt>Full URL</dt>
+                                    <dd class="break">{{ selected.full_url }}</dd>
+                                </dl>
+                            </section>
 
-                            <h3>Headers</h3>
-                            <pre class="code-block">
-                                <code
-                                    v-if="formattedHeaders.isJson"
-                                    class="language-json"
-                                    data-highlight-json
-                                    v-text="formattedHeaders.text"
-                                ></code>
-                                <code v-else class="language-plaintext" v-text="formattedHeaders.text"></code>
-                            </pre>
+                            <section class="panel__section">
+                                <h3>Headers</h3>
+                                <pre class="code-block">
+                                    <code
+                                        v-if="formattedHeaders.isJson"
+                                        class="language-json"
+                                        data-highlight-json
+                                        v-text="formattedHeaders.text"
+                                    ></code>
+                                    <code v-else class="language-plaintext" v-text="formattedHeaders.text"></code>
+                                </pre>
+                            </section>
 
-                            <h3>Query Parameters</h3>
-                            <pre class="code-block">
-                                <code
-                                    v-if="formattedQuery.isJson"
-                                    class="language-json"
-                                    data-highlight-json
-                                    v-text="formattedQuery.text"
-                                ></code>
-                                <code v-else class="language-plaintext" v-text="formattedQuery.text"></code>
-                            </pre>
+                            <section class="panel__section">
+                                <h3>Query Parameters</h3>
+                                <pre class="code-block">
+                                    <code
+                                        v-if="formattedQuery.isJson"
+                                        class="language-json"
+                                        data-highlight-json
+                                        v-text="formattedQuery.text"
+                                    ></code>
+                                    <code v-else class="language-plaintext" v-text="formattedQuery.text"></code>
+                                </pre>
+                            </section>
 
-                            <h3>Body</h3>
-                            <pre class="code-block">
-                                <code
-                                    v-if="formattedBody.isJson"
-                                    class="language-json"
-                                    data-highlight-json
-                                    v-text="formattedBody.text"
-                                ></code>
-                                <code v-else class="language-plaintext" v-text="formattedBody.text"></code>
-                            </pre>
+                            <section class="panel__section">
+                                <h3>Body</h3>
+                                <pre class="code-block">
+                                    <code
+                                        v-if="formattedBody.isJson"
+                                        class="language-json"
+                                        data-highlight-json
+                                        v-text="formattedBody.text"
+                                    ></code>
+                                    <code v-else class="language-plaintext" v-text="formattedBody.text"></code>
+                                </pre>
+                            </section>
                         </article>
                     </div>
                 </section>
             </main>
-            <footer class="layout__footer">
-                <small></small>
+
+            <footer class="app-footer">
+                <small>Send requests to this container on port 8080. UI refresh interval is configurable in <code>public/assets/app.js</code>.</small>
             </footer>
+
             <div v-if="error" class="toast toast--error">
                 <p>{{ error }}</p>
             </div>
