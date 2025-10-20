@@ -45,5 +45,5 @@ Configure the following repository secrets before tagging:
 
 ## Configuration
 - Captured requests persist inside the Docker volume `storage_data`; remove it with `docker compose down -v` when you need a clean slate.
-- UI refreshes the request list every 10 seconds; adjust polling in `public/assets/app.js` if needed.
+- UI refreshes the request list every 5 seconds; adjust polling in `public/assets/app.js` if needed.
 - For production, front the container with HTTPS termination and persist `storage_data` to durable storage.
