@@ -1,0 +1,8 @@
+/vendor/
+/storage/*.sqlite
+/storage/*.db
+/storage/*.db3
+/.phpunit.cache/
+.phpunit.result.cache
+.DS_Store
+node_modules/

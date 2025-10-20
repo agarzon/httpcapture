@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: httpcapture_app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/var/www/html
+      - storage_data:/var/www/html/storage
+
+volumes:
+  storage_data:

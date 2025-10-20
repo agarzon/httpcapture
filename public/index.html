@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>httpcapture</title>
+        <link rel="stylesheet" href="/assets/app.css" />
+        <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+        <script type="module" defer src="/assets/app.js"></script>
+    </head>
+    <body>
+        <div id="app" class="layout">
+            <header class="layout__header">
+                <h1>httpcapture</h1>
+                <p>Inspect inbound webhooks and HTTP calls in real-time.</p>
+            </header>
+            <main class="layout__main">
+                <section class="panel panel--list">
+                    <header class="panel__header">
+                        <h2>Captured Requests</h2>
+                        <div class="panel__actions">
+                            <button type="button" class="btn" @click="refresh" :disabled="loading">
+                                Refresh
+                            </button>
+                            <button type="button" class="btn btn--danger" @click="deleteAll" :disabled="loading || !requests.length">
+                                Delete All
+                            </button>
+                        </div>
+                    </header>
+                    <div class="panel__body">
+                        <p class="empty" v-if="!requests.length && !loading">No requests captured yet.</p>
+                        <ul class="request-list">
+                            <li
+                                v-for="item in requests"
+                                :key="item.id"
+                                :class="['request-list__item', { 'request-list__item--active': selected && selected.id === item.id }]"
+                                @click="select(item.id)"
+                            >
+                                <span class="request-tag" :class="'request-tag--' + item.method.toLowerCase()">{{ item.method }}</span>
+                                <div class="request-meta">
+                                    <p class="request-path">{{ item.path }}</p>
+                                    <p class="request-time">{{ formatDate(item.created_at) }}</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+                <section class="panel panel--detail">
+                    <header class="panel__header">
+                        <h2>Details</h2>
+                        <div class="panel__actions">
+                            <button type="button" class="btn btn--danger" @click="deleteOne" :disabled="loading || !selected">
+                                Delete
+                            </button>
+                        </div>
+                    </header>
+                    <div class="panel__body panel__body--scroll">
+                        <p class="empty" v-if="!selected && !loading">Select a request to inspect payloads, headers, and metadata.</p>
+                        <article v-if="selected" class="detail">
+                            <h3>Overview</h3>
+                            <dl class="detail__grid">
+                                <dt>Method</dt>
+                                <dd>{{ selected.method }}</dd>
+                                <dt>Path</dt>
+                                <dd>{{ selected.path }}</dd>
+                                <dt>Captured</dt>
+                                <dd>{{ formatDate(selected.created_at) }}</dd>
+                                <dt>Client IP</dt>
+                                <dd>{{ selected.client_ip }}</dd>
+                                <dt>Full URL</dt>
+                                <dd class="break">{{ selected.full_url }}</dd>
+                            </dl>
+
+                            <h3>Headers</h3>
+                            <pre class="code-block">{{ pretty(selected.headers) }}</pre>
+
+                            <h3>Query Parameters</h3>
+                            <pre class="code-block">{{ pretty(selected.query_params) }}</pre>
+
+                            <h3>Body</h3>
+                            <pre class="code-block">{{ selected.body || '(empty)' }}</pre>
+                        </article>
+                    </div>
+                </section>
+            </main>
+            <footer class="layout__footer">
+                <small>Send requests to this container on port 8080. UI refreshes every 10s.</small>
+            </footer>
+            <div v-if="error" class="toast toast--error">
+                <p>{{ error }}</p>
+            </div>
+        </div>
+    </body>
+</html>

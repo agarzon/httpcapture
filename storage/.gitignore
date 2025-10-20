@@ -1,0 +1,3 @@
+# Ignore SQLite databases and other generated files in storage.
+*
+!.gitignore
