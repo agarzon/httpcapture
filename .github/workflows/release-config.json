@@ -1,0 +1,21 @@
+{
+  "template": "## Changelog\n{{CHANGELOG}}",
+  "categories": [
+    {
+      "title": "### ✨ Features",
+      "labels": ["enhancement", "feature"],
+      "empty_template": ""
+    },
+    {
+      "title": "### 🛠 Fixes",
+      "labels": ["bug", "fix"],
+      "empty_template": ""
+    },
+    {
+      "title": "### 📦 Other",
+      "labels": [],
+      "empty_template": ""
+    }
+  ],
+  "pr_template": "- {{TITLE}} (#{NUMBER})"
+}

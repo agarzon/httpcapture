@@ -31,6 +31,18 @@ Original IP detection prioritises `X-Forwarded-For`, falling back to `REMOTE_ADD
 
 List endpoints accept `page` (1-based) and `per_page` (max 100) query parameters; the UI shows 10 per page by default with pager buttons at the top of the list.
 
+## Release Automation
+Pushing a tag matching `v*.*.*` triggers the GitHub Actions release workflow:
+
+- Runs the PHPUnit suite
+- Builds and pushes the Docker image to Docker Hub as `latest` and the tag version
+- Generates release notes and creates a GitHub Release
+
+Configure the following repository secrets before tagging:
+
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN`
+
 ## Configuration
 - Captured requests persist inside the Docker volume `storage_data`; remove it with `docker compose down -v` when you need a clean slate.
 - UI refreshes the request list every 10 seconds; adjust polling in `public/assets/app.js` if needed.
