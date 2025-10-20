@@ -14,12 +14,16 @@ final class CaptureController
     {
     }
 
-    public function store(Request $request): Response
+    public function store(Request $request, int $statusCode = 201, string $message = 'Request captured', bool $capturePayload = true): Response
     {
         $server = $request->getServerParams();
         $scheme = $this->detectScheme($server);
         $host = $server['HTTP_HOST'] ?? ($server['SERVER_NAME'] ?? 'localhost');
         $fullUrl = sprintf('%s://%s%s', $scheme, $host, $request->getUri());
+
+        $body = $capturePayload ? $this->resolveBody($request) : '';
+        $formData = $capturePayload ? $request->getParsedBody() : [];
+        $files = $capturePayload ? $request->getUploadedFiles() : [];
 
         $record = $this->repository->store([
             'method' => $request->getMethod(),
@@ -27,16 +31,16 @@ final class CaptureController
             'full_url' => $fullUrl,
             'query_params' => $request->getQueryParams(),
             'headers' => $request->getHeaders(),
-            'body' => $this->resolveBody($request),
-            'form_data' => $request->getParsedBody(),
-            'files' => $request->getUploadedFiles(),
+            'body' => $body,
+            'form_data' => $formData,
+            'files' => $files,
             'client_ip' => $request->getClientIp(),
         ]);
 
         return Response::json([
-            'message' => 'Request captured',
+            'message' => $message,
             'data' => $record,
-        ], 201);
+        ], $statusCode);
     }
 
     private function resolveBody(Request $request): string

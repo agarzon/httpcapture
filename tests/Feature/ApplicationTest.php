@@ -170,4 +170,29 @@ final class ApplicationTest extends TestCase
         $this->assertSame(2, $payload['meta']['last_page']);
         $this->assertSame(2, $payload['meta']['per_page']);
     }
+
+    public function testGetFallbackStoresAndReturnsOk(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/healthz',
+            'HTTP_HOST' => 'example.test',
+        ], '');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('OK', $payload['message']);
+
+        $listResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests',
+        ], '');
+
+        $listPayload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('/healthz', $listPayload['data'][0]['path']);
+        $this->assertSame('GET', $listPayload['data'][0]['method']);
+        $this->assertSame('', $listPayload['data'][0]['body']);
+    }
 }

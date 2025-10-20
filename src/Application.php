@@ -48,6 +48,10 @@ final class Application
             return $this->renderUi();
         }
 
+        if ($request->getMethod() === 'GET') {
+            return $this->captureController->store($request, 200, 'OK', false);
+        }
+
         return $this->captureController->store($request);
     }
 
