@@ -41,9 +41,24 @@ final class DatabaseConnection
                 query_params TEXT NOT NULL,
                 headers TEXT NOT NULL,
                 body TEXT,
+                form_data TEXT,
+                files TEXT,
                 client_ip TEXT NOT NULL,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         SQL);
+
+        $this->ensureColumn('form_data', 'TEXT');
+        $this->ensureColumn('files', 'TEXT');
+    }
+
+    private function ensureColumn(string $column, string $definition): void
+    {
+        $statement = $this->pdo->query('PRAGMA table_info(requests)');
+        $columns = $statement ? $statement->fetchAll(PDO::FETCH_COLUMN, 1) : [];
+
+        if (!in_array($column, $columns, true)) {
+            $this->pdo->exec(sprintf('ALTER TABLE requests ADD COLUMN %s %s', $column, $definition));
+        }
     }
 }

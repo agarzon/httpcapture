@@ -8,7 +8,14 @@ use HttpCapture\Http\Response;
 require __DIR__ . '/src/bootstrap.php';
 
 $application = new Application();
-$response = $application->handle($_SERVER, file_get_contents('php://input') ?: '');
+$rawBody = file_get_contents('php://input');
+$response = $application->handle(
+    $_SERVER,
+    $rawBody === false ? '' : $rawBody,
+    $_GET,
+    $_POST,
+    $_FILES
+);
 
 if (!$response instanceof Response) {
     return;

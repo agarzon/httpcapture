@@ -58,6 +58,8 @@ final class RequestRepository
      *     query_params: array<string, mixed>,
      *     headers: array<string, string>,
      *     body: string,
+     *     form_data: array<string, mixed>,
+     *     files: array<string, mixed>,
      *     client_ip: string
      * } $request
      *
@@ -66,8 +68,8 @@ final class RequestRepository
     public function store(array $request): array
     {
         $statement = $this->pdo->prepare(
-            'INSERT INTO requests (method, path, full_url, query_params, headers, body, client_ip, created_at)
-             VALUES (:method, :path, :full_url, :query_params, :headers, :body, :client_ip, :created_at)'
+            'INSERT INTO requests (method, path, full_url, query_params, headers, body, form_data, files, client_ip, created_at)
+             VALUES (:method, :path, :full_url, :query_params, :headers, :body, :form_data, :files, :client_ip, :created_at)'
         );
 
         $createdAt = (new DateTimeImmutable())->format(DateTimeImmutable::ATOM);
@@ -79,6 +81,8 @@ final class RequestRepository
             ':query_params' => json_encode($request['query_params'], JSON_THROW_ON_ERROR),
             ':headers' => json_encode($request['headers'], JSON_THROW_ON_ERROR),
             ':body' => $request['body'],
+            ':form_data' => json_encode($request['form_data'], JSON_THROW_ON_ERROR),
+            ':files' => json_encode($request['files'], JSON_THROW_ON_ERROR),
             ':client_ip' => $request['client_ip'],
             ':created_at' => $createdAt,
         ]);
@@ -111,6 +115,8 @@ final class RequestRepository
     {
         $row['query_params'] = $this->safeDecode($row['query_params'] ?? '{}');
         $row['headers'] = $this->safeDecode($row['headers'] ?? '{}');
+        $row['form_data'] = $this->safeDecode($row['form_data'] ?? '{}');
+        $row['files'] = $this->safeDecode($row['files'] ?? '{}');
 
         return $row;
     }

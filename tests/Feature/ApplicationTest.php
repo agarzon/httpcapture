@@ -111,4 +111,38 @@ final class ApplicationTest extends TestCase
         $this->assertSame(201, $secondResponse->getStatusCode());
         $this->assertSame(1, $secondPayload['data']['id']);
     }
+
+    public function testMultipartFormBodyIsCaptured(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle(
+            [
+                'REQUEST_METHOD' => 'POST',
+                'REQUEST_URI' => '/forms',
+                'HTTP_HOST' => 'example.test',
+                'CONTENT_TYPE' => 'multipart/form-data; boundary=----WebKitFormBoundary',
+            ],
+            '',
+            [],
+            ['name' => 'Alice', 'age' => '30'],
+            [
+                'avatar' => [
+                    'name' => 'avatar.png',
+                    'type' => 'image/png',
+                    'size' => 512,
+                    'error' => 0,
+                ],
+            ]
+        );
+
+        $this->assertSame(201, $response->getStatusCode());
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertArrayHasKey('form_data', $payload['data']);
+        $this->assertSame('Alice', $payload['data']['form_data']['name']);
+        $this->assertSame('avatar.png', $payload['data']['files']['avatar']['name']);
+
+        $jsonBody = json_decode($payload['data']['body'], true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('30', $jsonBody['form']['age']);
+    }
 }

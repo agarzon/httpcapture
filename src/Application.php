@@ -31,9 +31,9 @@ final class Application
         $this->registerRoutes();
     }
 
-    public function handle(array $server, string $rawBody): Response
+    public function handle(array $server, string $rawBody, array $queryParams = [], array $parsedBody = [], array $files = []): Response
     {
-        $request = Request::fromGlobals($server, $rawBody);
+        $request = Request::fromGlobals($server, $rawBody, $queryParams, $parsedBody, $files);
 
         $matched = $this->router->dispatch($request);
         if ($matched instanceof Response) {

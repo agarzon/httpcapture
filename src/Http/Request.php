@@ -17,13 +17,17 @@ final class Request
     private string $clientIp;
     /** @var array<string, mixed> */
     private array $server;
+    /** @var array<string, mixed> */
+    private array $parsedBody;
+    /** @var array<string, mixed> */
+    private array $uploadedFiles;
 
     /**
      * @param array<string, mixed> $server
      * @param array<string, mixed> $query
      * @param array<string, string> $headers
      */
-    public function __construct(array $server, string $method, string $uri, string $path, array $query, array $headers, string $body, string $clientIp)
+    public function __construct(array $server, string $method, string $uri, string $path, array $query, array $headers, string $body, string $clientIp, array $parsedBody, array $uploadedFiles)
     {
         $this->server = $server;
         $this->method = strtoupper($method);
@@ -33,12 +37,14 @@ final class Request
         $this->headers = $headers;
         $this->body = $body;
         $this->clientIp = $clientIp;
+        $this->parsedBody = $parsedBody;
+        $this->uploadedFiles = $uploadedFiles;
     }
 
     /**
      * @param array<string, mixed> $server
      */
-    public static function fromGlobals(array $server, string $rawBody): self
+    public static function fromGlobals(array $server, string $rawBody, array $queryParams = [], array $postParams = [], array $files = []): self
     {
         $method = $server['REQUEST_METHOD'] ?? 'GET';
         $uri = $server['REQUEST_URI'] ?? '/';
@@ -46,10 +52,16 @@ final class Request
         $queryString = parse_url($uri, PHP_URL_QUERY) ?: '';
         parse_str($queryString, $query);
 
+        if (!empty($queryParams)) {
+            $query = array_merge($query, $queryParams);
+        }
+
         $headers = self::extractHeaders($server);
         $clientIp = self::determineClientIp($server, $headers);
+        $parsedBody = $postParams;
+        $uploadedFiles = self::normalizeFilesArray($files);
 
-        return new self($server, $method, $uri, $path, $query, $headers, $rawBody, $clientIp);
+        return new self($server, $method, $uri, $path, $query, $headers, $rawBody, $clientIp, $parsedBody, $uploadedFiles);
     }
 
     /**
@@ -163,5 +175,99 @@ final class Request
     public function getServerParams(): array
     {
         return $this->server;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getParsedBody(): array
+    {
+        return $this->parsedBody;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getUploadedFiles(): array
+    {
+        return $this->uploadedFiles;
+    }
+
+    /**
+     * @param array<string, mixed> $files
+     * @return array<string, mixed>
+     */
+    private static function normalizeFilesArray(array $files): array
+    {
+        $normalized = [];
+
+        foreach ($files as $field => $info) {
+            if (!is_array($info)) {
+                continue;
+            }
+
+            if (isset($info['name']) && !is_array($info['name'])) {
+                $normalized[$field] = self::punchFileLeaf($info);
+                continue;
+            }
+
+            $normalized[$field] = self::normalizeFilesRecursive($info);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param array<string, mixed> $file
+     * @return array<string, mixed>
+     */
+    private static function normalizeFilesRecursive(array $file): array
+    {
+        $normalized = [];
+
+        $names = $file['name'] ?? [];
+        $types = $file['type'] ?? [];
+        $tmpNames = $file['tmp_name'] ?? [];
+        $errors = $file['error'] ?? [];
+        $sizes = $file['size'] ?? [];
+
+        $keys = array_keys((array) $names);
+
+        foreach ($keys as $key) {
+            if (is_array($names[$key] ?? null)) {
+                $normalized[$key] = self::normalizeFilesRecursive([
+                    'name' => $names[$key] ?? null,
+                    'type' => $types[$key] ?? null,
+                    'tmp_name' => $tmpNames[$key] ?? null,
+                    'error' => $errors[$key] ?? null,
+                    'size' => $sizes[$key] ?? null,
+                ]);
+                continue;
+            }
+
+            $normalized[$key] = self::punchFileLeaf([
+                'name' => $names[$key] ?? null,
+                'type' => $types[$key] ?? null,
+                'tmp_name' => $tmpNames[$key] ?? null,
+                'error' => $errors[$key] ?? null,
+                'size' => $sizes[$key] ?? null,
+            ]);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param array<string, mixed> $file
+     * @return array<string, mixed>
+     */
+    private static function punchFileLeaf(array $file): array
+    {
+        return [
+            'name' => (string) ($file['name'] ?? ''),
+            'type' => (string) ($file['type'] ?? ''),
+            'size' => (int) ($file['size'] ?? 0),
+            'error' => (int) ($file['error'] ?? 0),
+        ];
     }
 }
