@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace HttpCapture\Http;
 
@@ -96,8 +96,13 @@ final class Request
      */
     private static function determineClientIp(array $server, array $headers): string
     {
-        $forwarded = $headers['X-Forwarded-For'] ?? $headers['Forwarded'] ?? '';
+        // Prioritize Cf-Connecting-Ip (set by Cloudflare to the real client IP)
+        if (!empty($headers['Cf-Connecting-Ip'])) {
+            return $headers['Cf-Connecting-Ip'];
+        }
 
+        // Then check X-Forwarded-For (may be overwritten by proxies like Traefik)
+        $forwarded = $headers['X-Forwarded-For'] ?? $headers['Forwarded'] ?? '';
         if (!empty($forwarded)) {
             if (str_contains($forwarded, ',')) {
                 $forwarded = trim(explode(',', $forwarded)[0]);
@@ -108,12 +113,8 @@ final class Request
             }
         }
 
-        if (!empty($headers['Cf-Connecting-Ip'])) {
-            return $headers['Cf-Connecting-Ip'];
-        }
-
+        // Fallback to REMOTE_ADDR
         $remoteAddr = $server['REMOTE_ADDR'] ?? '0.0.0.0';
-
         return is_string($remoteAddr) ? $remoteAddr : '0.0.0.0';
     }
 
