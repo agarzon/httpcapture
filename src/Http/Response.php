@@ -42,6 +42,14 @@ final class Response
     }
 
     /**
+     * @param array<string, string> $headers
+     */
+    public static function empty(int $statusCode = 204, array $headers = []): self
+    {
+        return new self('', $statusCode, $headers);
+    }
+
+    /**
      * @return array<string, string>
      */
     public function getHeaders(): array

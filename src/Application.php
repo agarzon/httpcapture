@@ -7,6 +7,7 @@ namespace HttpCapture;
 use HttpCapture\Controller\CaptureController;
 use HttpCapture\Controller\RequestsController;
 use HttpCapture\Http\Request;
+use HttpCapture\Http\RequestFilter;
 use HttpCapture\Http\Response;
 use HttpCapture\Http\Router;
 use HttpCapture\Persistence\DatabaseConnection;
@@ -17,8 +18,9 @@ final class Application
     private Router $router;
     private RequestsController $requestsController;
     private CaptureController $captureController;
+    private RequestFilter $requestFilter;
 
-    public function __construct(?string $storagePath = null)
+    public function __construct(?string $storagePath = null, ?RequestFilter $requestFilter = null)
     {
         $storagePath = $storagePath ?? dirname(__DIR__) . '/storage/httpcapture.sqlite';
         $connection = new DatabaseConnection($storagePath);
@@ -27,6 +29,7 @@ final class Application
         $this->router = new Router();
         $this->requestsController = new RequestsController($repository);
         $this->captureController = new CaptureController($repository);
+        $this->requestFilter = $requestFilter ?? RequestFilter::default();
 
         $this->registerRoutes();
     }
@@ -46,6 +49,10 @@ final class Application
 
         if ($request->getMethod() === 'GET' && $this->shouldRenderUi($request)) {
             return $this->renderUi();
+        }
+
+        if (!$this->requestFilter->shouldCapture($request)) {
+            return Response::empty();
         }
 
         if ($request->getMethod() === 'GET') {

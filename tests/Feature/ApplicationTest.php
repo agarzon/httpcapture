@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HttpCapture\Tests\Feature;
 
 use HttpCapture\Application;
+use HttpCapture\Http\RequestFilter;
 use PHPUnit\Framework\TestCase;
 
 final class ApplicationTest extends TestCase
@@ -194,5 +195,58 @@ final class ApplicationTest extends TestCase
         $this->assertSame('/healthz', $listPayload['data'][0]['path']);
         $this->assertSame('GET', $listPayload['data'][0]['method']);
         $this->assertSame('', $listPayload['data'][0]['body']);
+    }
+
+    public function testDefaultFilterIgnoresFaviconRequests(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $faviconResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/favicon.ico',
+            'HTTP_HOST' => 'example.test',
+        ], '');
+
+        $this->assertSame(204, $faviconResponse->getStatusCode());
+        $this->assertSame('', $faviconResponse->getBody());
+
+        $listResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests',
+        ], '');
+
+        $payload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(0, $payload['meta']['count']);
+    }
+
+    public function testCustomFilterRulesCanSkipAdditionalTraffic(): void
+    {
+        $filter = RequestFilter::create()->ignorePathPrefix('/internal');
+        $app = new Application($this->databasePath, $filter);
+
+        $ignored = $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/internal/ping',
+            'HTTP_HOST' => 'example.test',
+        ], 'hello');
+
+        $this->assertSame(204, $ignored->getStatusCode());
+
+        $captured = $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/webhook',
+            'HTTP_HOST' => 'example.test',
+        ], 'payload');
+
+        $this->assertSame(201, $captured->getStatusCode());
+
+        $listResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests',
+        ], '');
+
+        $payload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(1, $payload['meta']['count']);
+        $this->assertSame('/webhook', $payload['data'][0]['path']);
     }
 }
