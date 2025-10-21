@@ -88,15 +88,6 @@
                             <p class="panel__subtitle">{{ total }} captured</p>
                         </div>
                         <div class="panel__actions">
-                            <button type="button" class="btn btn--ghost" @click="refresh" :disabled="loading">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="23 4 23 10 17 10"></polyline>
-                                    <polyline points="1 20 1 14 7 14"></polyline>
-                                    <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
-                                    <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
-                                </svg>
-                                <span>Refresh</span>
-                            </button>
                             <button type="button" class="btn btn--danger" @click="deleteAll" :disabled="loading || !requests.length">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="3 6 5 6 21 6"></polyline>
