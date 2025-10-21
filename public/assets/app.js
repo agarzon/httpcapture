@@ -11,55 +11,8 @@ createApp({
         const perPage = ref(10);
         const total = ref(0);
         const lastPage = ref(1);
+        const currentYear = new Date().getFullYear();
         let intervalId = null;
-        let removeSystemListener = null;
-
-        const themeStorageKey = 'httpcapture:theme';
-        const theme = ref('system');
-        const systemTheme = ref('light');
-
-        const resolvedTheme = computed(() => (theme.value === 'system' ? systemTheme.value : theme.value));
-        const resolvedThemeLabel = computed(() => (resolvedTheme.value === 'dark' ? 'Dark' : 'Light'));
-
-        const applyTheme = () => {
-            if (typeof document === 'undefined') {
-                return;
-            }
-
-            const root = document.documentElement;
-            root.dataset.theme = resolvedTheme.value;
-            root.dataset.themeSource = theme.value;
-            root.style.setProperty('color-scheme', resolvedTheme.value);
-        };
-
-        if (typeof window !== 'undefined') {
-            const savedTheme = window.localStorage.getItem(themeStorageKey);
-            if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') {
-                theme.value = savedTheme;
-            }
-        }
-
-        watch(
-            () => [resolvedTheme.value, theme.value],
-            () => applyTheme(),
-            { immediate: true }
-        );
-
-        watch(theme, (value) => {
-            if (typeof window !== 'undefined') {
-                window.localStorage.setItem(themeStorageKey, value);
-            }
-        });
-
-        const setTheme = (value) => {
-            if (value === theme.value) {
-                return;
-            }
-
-            if (value === 'light' || value === 'dark' || value === 'system') {
-                theme.value = value;
-            }
-        };
 
         const setError = (message) => {
             error.value = message;
@@ -263,6 +216,26 @@ createApp({
             };
         };
 
+        const METHOD_THEME_MAP = {
+            get: 'border-sky-400/60 bg-sky-400/10 text-sky-200',
+            post: 'border-emerald-400/60 bg-emerald-400/10 text-emerald-200',
+            delete: 'border-rose-400/60 bg-rose-400/10 text-rose-200',
+            put: 'border-amber-400/60 bg-amber-400/10 text-amber-200',
+            patch: 'border-fuchsia-400/60 bg-fuchsia-400/10 text-fuchsia-200',
+            head: 'border-cyan-300/60 bg-cyan-300/10 text-cyan-100',
+            options: 'border-indigo-400/60 bg-indigo-400/10 text-indigo-200',
+            default: 'border-slate-400/50 bg-slate-400/10 text-slate-200',
+        };
+
+        const methodClasses = (method) => {
+            if (!method) {
+                return METHOD_THEME_MAP.default;
+            }
+
+            const normalized = String(method).toLowerCase();
+            return METHOD_THEME_MAP[normalized] ?? METHOD_THEME_MAP.default;
+        };
+
         const formattedHeaders = computed(() => formatDisplay(selected.value?.headers ?? null));
         const formattedQuery = computed(() => formatDisplay(selected.value?.query_params ?? null));
         const formattedBody = computed(() => formatDisplay(selected.value?.body ?? null));
@@ -306,30 +279,10 @@ createApp({
         const goToNextPage = () => changePage(page.value + 1);
 
         onMounted(async () => {
-            if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                const updateSystemTheme = (event) => {
-                    systemTheme.value = event.matches ? 'dark' : 'light';
-                };
-
-                updateSystemTheme(mediaQuery);
-
-                if (typeof mediaQuery.addEventListener === 'function') {
-                    const listener = (event) => updateSystemTheme(event);
-                    mediaQuery.addEventListener('change', listener);
-                    removeSystemListener = () => mediaQuery.removeEventListener('change', listener);
-                } else if (typeof mediaQuery.addListener === 'function') {
-                    const listener = (event) => updateSystemTheme(event);
-                    mediaQuery.addListener(listener);
-                    removeSystemListener = () => mediaQuery.removeListener(listener);
-                }
-            }
-
             if (typeof window !== 'undefined' && window.hljs) {
                 window.hljs.configure({ ignoreUnescapedHTML: true });
             }
 
-            applyTheme();
             await refresh();
             highlightJsonBlocks();
             intervalId = window.setInterval(fetchRequests, POLLING_INTERVAL_MS);
@@ -338,10 +291,6 @@ createApp({
         onBeforeUnmount(() => {
             if (intervalId) {
                 window.clearInterval(intervalId);
-            }
-
-            if (typeof removeSystemListener === 'function') {
-                removeSystemListener();
             }
         });
 
@@ -358,10 +307,6 @@ createApp({
             canGoNext,
             goToPreviousPage,
             goToNextPage,
-            theme,
-            resolvedTheme,
-            resolvedThemeLabel,
-            setTheme,
             refresh,
             select,
             deleteOne,
@@ -370,6 +315,8 @@ createApp({
             formattedHeaders,
             formattedQuery,
             formattedBody,
+            methodClasses,
+            currentYear,
         };
     },
 }).mount('#app');

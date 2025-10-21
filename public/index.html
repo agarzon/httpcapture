@@ -6,223 +6,264 @@
         <title>httpcapture</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="alternate icon" href="/favicon.ico" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+        <script>
+            window.tailwind = {
+                config: {
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['"Manrope"', 'Inter', 'system-ui', 'sans-serif'],
+                                mono: ['"JetBrains Mono"', 'Menlo', 'monospace'],
+                            },
+                            colors: {
+                                brand: {
+                                    50: '#eff6ff',
+                                    100: '#dbeafe',
+                                    500: '#38bdf8',
+                                    600: '#0ea5e9',
+                                    700: '#0284c7',
+                                },
+                            },
+                            boxShadow: {
+                                brand: '0px 20px 60px rgba(15, 23, 42, 0.35)',
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <script defer src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
         <link rel="stylesheet" href="/assets/app.css" />
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
         <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
         <script type="module" defer src="/assets/app.js"></script>
     </head>
-    <body>
-        <div id="app" class="app-shell">
-            <header class="app-header">
-                <div class="brand">
-                    <h1 class="brand__title">httpcapture</h1>
-                    <p class="brand__subtitle">Inspect inbound webhooks and HTTP calls in real-time.</p>
-                </div>
-                <div class="header-actions">
-                    <div class="theme-toggle" role="radiogroup" aria-label="Theme selector">
-                        <div class="theme-toggle__controls">
-                            <button
-                                type="button"
-                                :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'light' }]"
-                                role="radio"
-                                :aria-checked="theme === 'light'"
-                                @click="setTheme('light')"
-                                title="Use light theme"
-                            >
-                                <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="4"></circle>
-                                    <path d="M12 2v2"></path>
-                                    <path d="M12 20v2"></path>
-                                    <path d="m4.93 4.93 1.41 1.41"></path>
-                                    <path d="m17.66 17.66 1.41 1.41"></path>
-                                    <path d="M2 12h2"></path>
-                                    <path d="M20 12h2"></path>
-                                    <path d="m6.34 17.66-1.41 1.41"></path>
-                                    <path d="m19.07 4.93-1.41 1.41"></path>
-                                </svg>
-                                <span>Light</span>
-                            </button>
-                            <button
-                                type="button"
-                                :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'dark' }]"
-                                role="radio"
-                                :aria-checked="theme === 'dark'"
-                                @click="setTheme('dark')"
-                                title="Use dark theme"
-                            >
-                                <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                                </svg>
-                                <span>Dark</span>
-                            </button>
-                            <button
-                                type="button"
-                                :class="['theme-toggle__btn', { 'theme-toggle__btn--active': theme === 'system' }]"
-                                role="radio"
-                                :aria-checked="theme === 'system'"
-                                @click="setTheme('system')"
-                                title="Follow system theme"
-                            >
-                                <svg class="icon" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-                                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                                </svg>
-                                <span>System</span>
-                            </button>
+    <body class="bg-slate-950 text-slate-100 antialiased">
+        <div id="app" class="relative flex min-h-screen flex-col">
+            <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+                <div class="absolute -left-32 top-[-20%] h-80 w-80 rounded-full bg-brand-500/30 blur-3xl sm:h-[26rem] sm:w-[26rem]"></div>
+                <div class="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-indigo-500/20 blur-[120px]"></div>
+                <div class="absolute bottom-[-20%] right-[-10%] h-[22rem] w-[22rem] rounded-full bg-emerald-400/10 blur-[140px]"></div>
+            </div>
+            <header class="mx-auto w-full max-w-6xl px-6 pt-10">
+                <div class="flex flex-col gap-6 rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl shadow-sky-900/40 backdrop-blur-xl">
+                    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                        <div class="max-w-2xl space-y-3">
+                            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-brand-100/80">
+                                HTTP Debugging Tool
+                            </span>
+                            <h1 class="text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">httpcapture</h1>
+                            <p class="text-base text-slate-300">
+                                Capture and inspect inbound webhooks and HTTP calls with a polished, responsive surface optimised for day-to-day debugging.
+                            </p>
                         </div>
-                        <span class="theme-toggle__status" aria-live="polite">
-                            <span class="theme-toggle__status-dot" :class="`theme-toggle__status-dot--${resolvedTheme}`"></span>
-                            {{ resolvedThemeLabel }} mode
-                        </span>
+                        <div class="flex flex-col gap-3 lg:items-end">
+                            <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs text-slate-200 shadow-inner shadow-white/10 backdrop-blur">
+                                <span class="font-semibold text-white">{{ total }}</span>
+                                <span class="uppercase tracking-[0.2em] text-slate-300/80">captures indexed</span>
+                            </div>
+                            <p class="text-right text-xs text-slate-400">
+                                Requests refresh automatically every few seconds. Select a capture to inspect payloads and headers instantly.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </header>
-
-            <main class="app-main">
-                <aside class="panel panel--list">
-                    <div class="panel__heading">
-                        <div>
-                            <h2 class="panel__title">Captured Requests</h2>
-                            <p class="panel__subtitle">{{ total }} captured</p>
+            <main class="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 pb-16 pt-8">
+                <section class="grid gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] xl:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+                    <aside class="flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/10 shadow-2xl shadow-black/40 backdrop-blur-xl">
+                        <div class="flex flex-col gap-4 border-b border-white/5 px-6 py-5">
+                            <div>
+                                <h2 class="text-lg font-semibold text-white">Captured Requests</h2>
+                                <p class="text-sm text-slate-300/80">Monitoring incoming payloads in realtime.</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white shadow transition hover:border-brand-500/60 hover:bg-brand-500/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                                    @click="refresh"
+                                    :disabled="loading"
+                                >
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                        <polyline points="1 20 1 14 7 14"></polyline>
+                                        <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
+                                        <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
+                                    </svg>
+                                    <span>Refresh</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center gap-2 rounded-full border border-rose-500/40 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-200 shadow transition hover:border-rose-400/80 hover:bg-rose-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/50 disabled:cursor-not-allowed disabled:opacity-50"
+                                    @click="deleteAll"
+                                    :disabled="loading || !requests.length"
+                                >
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                                        <path d="M10 11v6"></path>
+                                        <path d="M14 11v6"></path>
+                                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                                    </svg>
+                                    <span>Clear</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="panel__actions">
-                            <button type="button" class="btn btn--danger" @click="deleteAll" :disabled="loading || !requests.length">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex h-full flex-col">
+                                <div class="border-b border-white/5 px-6 py-3 text-xs text-slate-300/70" v-if="lastPage > 1">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <button
+                                            type="button"
+                                            class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-slate-200 transition hover:border-brand-500/60 hover:bg-brand-500/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                                            :disabled="!canGoPrevious"
+                                            @click="goToPreviousPage"
+                                        >
+                                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="15 18 9 12 15 6"></polyline>
+                                            </svg>
+                                            <span>Previous</span>
+                                        </button>
+                                        <span class="font-medium text-white">Page {{ page }} of {{ lastPage }}</span>
+                                        <button
+                                            type="button"
+                                            class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-slate-200 transition hover:border-brand-500/60 hover:bg-brand-500/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                                            :disabled="!canGoNext"
+                                            @click="goToNextPage"
+                                        >
+                                            <span>Next</span>
+                                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="9 18 15 12 9 6"></polyline>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="scrollable-panel">
+                                    <p class="px-6 py-10 text-sm font-medium text-slate-300/80" v-if="!requests.length && !loading">
+                                        Waiting for new captures — send a webhook or HTTP call to see it appear here instantly.
+                                    </p>
+                                    <ul class="flex flex-1 flex-col gap-3 px-4 py-4" v-else>
+                                        <li
+                                            v-for="item in requests"
+                                            :key="item.id"
+                                            class="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/5 bg-white/5 p-4 transition hover:border-brand-500/60 hover:bg-brand-500/15 focus-within:ring-2 focus-within:ring-brand-500/40 focus:outline-none"
+                                            :class="{ 'border-brand-500/80 bg-brand-500/15 shadow-lg shadow-brand-500/30': selected && selected.id === item.id }"
+                                            @click="select(item.id)"
+                                        >
+                                            <div class="flex items-start gap-4">
+                                                <span
+                                                    class="inline-flex min-w-[4.75rem] items-center justify-center rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.25em]"
+                                                    :class="methodClasses(item.method)"
+                                                >
+                                                    {{ item.method }}
+                                                </span>
+                                                <div class="min-w-0 flex-1 space-y-1.5">
+                                                    <p class="truncate text-sm font-semibold text-white">{{ item.path }}</p>
+                                                    <p class="text-xs text-slate-400">{{ formatDate(item.created_at) }}</p>
+                                                </div>
+                                                <svg class="mt-1 h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-brand-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                                </svg>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                    <section class="flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/10 shadow-2xl shadow-black/40 backdrop-blur-xl">
+                        <div class="flex items-start justify-between gap-4 border-b border-white/5 px-6 py-5">
+                            <div>
+                                <h2 class="text-lg font-semibold text-white">Details</h2>
+                                <p class="text-sm text-slate-300/80" v-if="selected">Captured {{ formatDate(selected.created_at) }}</p>
+                                <p class="text-sm text-slate-400/80" v-else>Choose a request to explore headers, query parameters, and payload content.</p>
+                            </div>
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-2 rounded-full border border-rose-500/60 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-200 shadow transition hover:border-rose-400/80 hover:bg-rose-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/50 disabled:cursor-not-allowed disabled:opacity-50"
+                                @click="deleteOne"
+                                :disabled="loading || !selected"
+                            >
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="3 6 5 6 21 6"></polyline>
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
                                     <path d="M10 11v6"></path>
                                     <path d="M14 11v6"></path>
                                     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
                                 </svg>
-                                <span>Delete All</span>
+                                <span>Delete</span>
                             </button>
                         </div>
-                    </div>
-                    <div class="panel__body">
-                        <div class="paginator" v-if="requests.length || total">
-                            <button type="button" class="btn paginator__btn" @click="goToPreviousPage" :disabled="!canGoPrevious">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg>
-                                <span>Prev</span>
-                            </button>
-                            <span class="paginator__status">
-                                Page {{ page }} / {{ lastPage }} · Showing {{ requests.length }} of {{ total }}
-                            </span>
-                            <button type="button" class="btn paginator__btn" @click="goToNextPage" :disabled="!canGoNext">
-                                <span>Next</span>
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </button>
+                        <div class="scrollable-panel">
+                            <p class="px-8 py-12 text-center text-sm font-medium text-slate-300/80" v-if="!selected && !loading">
+                                Select a request from the timeline to start exploring payloads and metadata.
+                            </p>
+                            <article v-if="selected" class="space-y-8 px-8 py-8">
+                                <section class="space-y-4">
+                                    <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300/80">Overview</h3>
+                                    <dl class="grid gap-4 text-sm sm:grid-cols-2">
+                                        <div class="space-y-1">
+                                            <dt class="text-xs uppercase tracking-[0.2em] text-slate-400">Method</dt>
+                                            <dd class="font-mono text-base text-white">{{ selected.method }}</dd>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <dt class="text-xs uppercase tracking-[0.2em] text-slate-400">Path</dt>
+                                            <dd class="font-mono text-sm text-brand-100">{{ selected.path }}</dd>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <dt class="text-xs uppercase tracking-[0.2em] text-slate-400">Captured</dt>
+                                            <dd class="font-mono text-sm text-slate-200">{{ formatDate(selected.created_at) }}</dd>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <dt class="text-xs uppercase tracking-[0.2em] text-slate-400">Client IP</dt>
+                                            <dd class="font-mono text-sm text-slate-200">{{ selected.client_ip }}</dd>
+                                        </div>
+                                        <div class="space-y-1 sm:col-span-2">
+                                            <dt class="text-xs uppercase tracking-[0.2em] text-slate-400">Full URL</dt>
+                                            <dd class="break-all font-mono text-sm text-slate-200">{{ selected.full_url }}</dd>
+                                        </div>
+                                    </dl>
+                                </section>
+                                <section class="space-y-4">
+                                    <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300/80">Headers</h3>
+                                    <pre class="code-panel">
+                                        <code v-if="formattedHeaders.isJson" class="language-json" data-highlight-json v-text="formattedHeaders.text"></code>
+                                        <code v-else class="language-plaintext" v-text="formattedHeaders.text"></code>
+                                    </pre>
+                                </section>
+                                <section class="space-y-4">
+                                    <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300/80">Query Parameters</h3>
+                                    <pre class="code-panel">
+                                        <code v-if="formattedQuery.isJson" class="language-json" data-highlight-json v-text="formattedQuery.text"></code>
+                                        <code v-else class="language-plaintext" v-text="formattedQuery.text"></code>
+                                    </pre>
+                                </section>
+                                <section class="space-y-4">
+                                    <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300/80">Body</h3>
+                                    <pre class="code-panel">
+                                        <code v-if="formattedBody.isJson" class="language-json" data-highlight-json v-text="formattedBody.text"></code>
+                                        <code v-else class="language-plaintext" v-text="formattedBody.text"></code>
+                                    </pre>
+                                </section>
+                            </article>
                         </div>
-                        <p class="empty" v-if="!requests.length && !loading">No requests captured yet.</p>
-                        <ul class="request-list">
-                            <li
-                                v-for="item in requests"
-                                :key="item.id"
-                                :class="['request-list__item', { 'request-list__item--active': selected && selected.id === item.id }]"
-                                @click="select(item.id)"
-                            >
-                                <span class="request-tag" :class="'request-tag--' + item.method.toLowerCase()">{{ item.method }}</span>
-                                <div class="request-meta">
-                                    <p class="request-path">{{ item.path }}</p>
-                                    <p class="request-time">{{ formatDate(item.created_at) }}</p>
-                                </div>
-                                <svg class="icon icon--chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </li>
-                        </ul>
-                    </div>
-                </aside>
-
-                <section class="panel panel--detail">
-                    <div class="panel__heading panel__heading--detail">
-                        <div>
-                            <h2 class="panel__title">Details</h2>
-                            <p class="panel__subtitle" v-if="selected">Captured {{ formatDate(selected.created_at) }}</p>
-                        </div>
-                        <button type="button" class="btn btn--danger" @click="deleteOne" :disabled="loading || !selected">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                                <path d="M10 11v6"></path>
-                                <path d="M14 11v6"></path>
-                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
-                            </svg>
-                            <span>Delete</span>
-                        </button>
-                    </div>
-                    <div class="panel__body panel__body--scroll">
-                        <p class="empty" v-if="!selected && !loading">Select a request to inspect payloads, headers, and metadata.</p>
-                        <article v-if="selected" class="detail">
-                            <section class="panel__section">
-                                <h3>Overview</h3>
-                                <dl class="detail__grid">
-                                    <dt>Method</dt>
-                                    <dd>{{ selected.method }}</dd>
-                                    <dt>Path</dt>
-                                    <dd>{{ selected.path }}</dd>
-                                    <dt>Captured</dt>
-                                    <dd>{{ formatDate(selected.created_at) }}</dd>
-                                    <dt>Client IP</dt>
-                                    <dd>{{ selected.client_ip }}</dd>
-                                    <dt>Full URL</dt>
-                                    <dd class="break">{{ selected.full_url }}</dd>
-                                </dl>
-                            </section>
-
-                            <section class="panel__section">
-                                <h3>Headers</h3>
-                                <pre class="code-block">
-                                    <code
-                                        v-if="formattedHeaders.isJson"
-                                        class="language-json"
-                                        data-highlight-json
-                                        v-text="formattedHeaders.text"
-                                    ></code>
-                                    <code v-else class="language-plaintext" v-text="formattedHeaders.text"></code>
-                                </pre>
-                            </section>
-
-                            <section class="panel__section">
-                                <h3>Query Parameters</h3>
-                                <pre class="code-block">
-                                    <code
-                                        v-if="formattedQuery.isJson"
-                                        class="language-json"
-                                        data-highlight-json
-                                        v-text="formattedQuery.text"
-                                    ></code>
-                                    <code v-else class="language-plaintext" v-text="formattedQuery.text"></code>
-                                </pre>
-                            </section>
-
-                            <section class="panel__section">
-                                <h3>Body</h3>
-                                <pre class="code-block">
-                                    <code
-                                        v-if="formattedBody.isJson"
-                                        class="language-json"
-                                        data-highlight-json
-                                        v-text="formattedBody.text"
-                                    ></code>
-                                    <code v-else class="language-plaintext" v-text="formattedBody.text"></code>
-                                </pre>
-                            </section>
-                        </article>
-                    </div>
+                    </section>
                 </section>
             </main>
-
-            <footer class="app-footer">
-                <small></small>
+            <footer class="relative z-10 pb-10">
+                <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 text-xs text-slate-400">
+                    <span>&copy; {{ currentYear }} <a href="https://github.com/agarzon/httpcapture" class="hover:text-slate-300">httpcapture</a></span>
+                    <span class="hidden items-center gap-2 sm:inline-flex">
+                        <span class="h-1.5 w-1.5 rounded-full bg-brand-500/70"></span>
+                        Live webhook observer
+                    </span>
+                </div>
             </footer>
-
-            <div v-if="error" class="toast toast--error">
+            <div v-if="error" class="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl border border-rose-500/40 bg-rose-500/15 p-5 text-sm font-medium text-rose-100 shadow-lg shadow-rose-500/30 backdrop-blur">
                 <p>{{ error }}</p>
             </div>
         </div>
