@@ -1,4 +1,4 @@
-const { createApp, ref, computed, onMounted, onBeforeUnmount, watch, nextTick } = Vue;
+const { createApp, ref, computed, onMounted, onBeforeUnmount } = Vue;
 const POLLING_INTERVAL_MS = 5_000;
 
 createApp({
@@ -165,57 +165,6 @@ createApp({
             }
         };
 
-        const formatDisplay = (value) => {
-            if (value === null || value === undefined) {
-                return {
-                    isJson: false,
-                    text: '(empty)',
-                };
-            }
-
-            if (typeof value === 'string') {
-                const trimmed = value.trim();
-                if (trimmed === '') {
-                    return {
-                        isJson: false,
-                        text: '(empty)',
-                    };
-                }
-
-                try {
-                    const parsed = JSON.parse(trimmed);
-                    return {
-                        isJson: true,
-                        text: JSON.stringify(parsed, null, 2),
-                    };
-                } catch (error) {
-                    return {
-                        isJson: false,
-                        text: value,
-                    };
-                }
-            }
-
-            if (typeof value === 'object') {
-                try {
-                    return {
-                        isJson: true,
-                        text: JSON.stringify(value, null, 2),
-                    };
-                } catch (error) {
-                    return {
-                        isJson: false,
-                        text: String(value),
-                    };
-                }
-            }
-
-            return {
-                isJson: false,
-                text: String(value),
-            };
-        };
-
         const METHOD_THEME_MAP = {
             get: 'border-sky-400/60 bg-sky-400/10 text-sky-200',
             post: 'border-emerald-400/60 bg-emerald-400/10 text-emerald-200',
@@ -236,31 +185,150 @@ createApp({
             return METHOD_THEME_MAP[normalized] ?? METHOD_THEME_MAP.default;
         };
 
-        const formattedHeaders = computed(() => formatDisplay(selected.value?.headers ?? null));
-        const formattedQuery = computed(() => formatDisplay(selected.value?.query_params ?? null));
-        const formattedBody = computed(() => formatDisplay(selected.value?.body ?? null));
+        const sections = ref({
+            headers: true,
+            query: true,
+            body: true,
+            formData: true,
+            files: true,
+        });
 
-        const highlightJsonBlocks = () => {
-            if (typeof window === 'undefined' || typeof window.hljs === 'undefined') {
-                return;
-            }
-
-            nextTick(() => {
-                const blocks = document.querySelectorAll('[data-highlight-json]');
-                blocks.forEach((block) => {
-                    if (block.dataset.highlighted) {
-                        block.innerHTML = block.textContent ?? '';
-                        block.removeAttribute('data-highlighted');
-                        block.classList.remove('hljs');
-                    }
-                    window.hljs.highlightElement(block);
-                });
-            });
+        const toggleSection = (name) => {
+            sections.value[name] = !sections.value[name];
         };
 
-        watch([formattedHeaders, formattedQuery, formattedBody], () => {
-            highlightJsonBlocks();
-        }, { immediate: true });
+        const copyToClipboard = async (text, event) => {
+            try {
+                await navigator.clipboard.writeText(text);
+                const btn = event.currentTarget;
+                const tooltip = document.createElement('div');
+                tooltip.className = 'absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-700 px-2 py-1 text-xs text-white shadow-lg pointer-events-none';
+                tooltip.textContent = 'Copied!';
+                btn.appendChild(tooltip);
+                setTimeout(() => tooltip.remove(), 1500);
+            } catch (err) {
+                setError('Failed to copy to clipboard');
+            }
+        };
+
+        const escapeHtml = (unsafe) => {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        };
+
+        const linkify = (text) => {
+            if (!text) return '';
+            const str = String(text);
+            const urlRegex = /(https?:\/\/[^\s<>"']+)/g;
+            let result = '';
+            let lastIndex = 0;
+            let match;
+            while ((match = urlRegex.exec(str)) !== null) {
+                result += escapeHtml(str.slice(lastIndex, match.index));
+                const escapedUrl = escapeHtml(match[0]);
+                result += `<a href="${escapedUrl}" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 underline decoration-sky-400/30">${escapedUrl}</a>`;
+                lastIndex = match.index + match[0].length;
+            }
+            result += escapeHtml(str.slice(lastIndex));
+            return result;
+        };
+
+        const relativeTime = (dateStr) => {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return 'just now';
+            const diffInMinutes = Math.floor(diffInSeconds / 60);
+            if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            if (diffInHours < 24) return `${diffInHours}h ago`;
+            const diffInDays = Math.floor(diffInHours / 24);
+            return `${diffInDays}d ago`;
+        };
+
+        const contentTypeBadge = (headers) => {
+            if (!headers) return { show: false, label: '' };
+            const key = Object.keys(headers).find(k => k.toLowerCase() === 'content-type');
+            if (!key) return { show: false, label: '' };
+
+            const value = headers[key].toLowerCase();
+            if (value.includes('application/json')) return { show: true, label: 'JSON' };
+            if (value.includes('text/html')) return { show: true, label: 'HTML' };
+            if (value.includes('multipart/form-data')) return { show: true, label: 'Form' };
+            if (value.includes('application/xml') || value.includes('text/xml')) return { show: true, label: 'XML' };
+            if (value.includes('text/plain')) return { show: true, label: 'Text' };
+            if (value.includes('application/x-www-form-urlencoded')) return { show: true, label: 'UrlEncoded' };
+            
+            return { show: false, label: '' };
+        };
+
+        const formattedBody = computed(() => {
+            const body = selected.value?.body;
+            if (body === null || body === undefined || body === '') {
+                return { isEmpty: true, lines: [], language: 'Plain Text', raw: '' };
+            }
+
+            let content = '';
+            let isJson = false;
+            let raw = '';
+
+            if (typeof body === 'string') {
+                try {
+                    const parsed = JSON.parse(body);
+                    raw = JSON.stringify(parsed, null, 2);
+                    isJson = true;
+                } catch (e) {
+                    raw = body;
+                    isJson = false;
+                }
+            } else if (typeof body === 'object') {
+                raw = JSON.stringify(body, null, 2);
+                isJson = true;
+            } else {
+                raw = String(body);
+            }
+
+            if (isJson && window.hljs) {
+                content = window.hljs.highlight(raw, { language: 'json' }).value;
+                // Post-process hljs HTML to linkify URLs inside string spans.
+                // hljs escapes quotes to &quot; so match that entity, not literal ".
+                // Content is already HTML-escaped by hljs, so use inline regex
+                // instead of linkify() which escapes again.
+                content = content.replace(/<span class="hljs-string">&quot;(.*?)&quot;<\/span>/g, (match, inner) => {
+                    const linked = inner.replace(/(https?:\/\/[^\s"<>]+)/g, (url) => {
+                        return `<a href="${url}" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 underline decoration-sky-400/30">${url}</a>`;
+                    });
+                    return `<span class="hljs-string">&quot;${linked}&quot;</span>`;
+                });
+            } else {
+                // linkify() escapes HTML internally, no need to pre-escape
+                content = linkify(raw);
+            }
+
+            return {
+                isEmpty: false,
+                lines: content.split('\n'),
+                language: isJson ? 'JSON' : 'Plain Text',
+                raw: raw,
+            };
+        });
+
+        const formattedHeaders = computed(() => selected.value?.headers || {});
+        const formattedQuery = computed(() => selected.value?.query_params || {});
+        const formattedFormData = computed(() => selected.value?.form_data || {});
+        const formattedFiles = computed(() => selected.value?.files || {});
+
+        const hasHeaders = computed(() => Object.keys(formattedHeaders.value).length > 0);
+        const hasQuery = computed(() => Object.keys(formattedQuery.value).length > 0);
+        const hasFormData = computed(() => Object.keys(formattedFormData.value).length > 0);
+        const hasFiles = computed(() => Object.keys(formattedFiles.value).length > 0);
 
         const canGoPrevious = computed(() => page.value > 1);
         const canGoNext = computed(() => page.value < lastPage.value);
@@ -284,7 +352,6 @@ createApp({
             }
 
             await refresh();
-            highlightJsonBlocks();
             intervalId = window.setInterval(fetchRequests, POLLING_INTERVAL_MS);
         });
 
@@ -315,8 +382,20 @@ createApp({
             formattedHeaders,
             formattedQuery,
             formattedBody,
+            formattedFormData,
+            formattedFiles,
+            hasHeaders,
+            hasQuery,
+            hasFormData,
+            hasFiles,
             methodClasses,
             currentYear,
+            sections,
+            toggleSection,
+            copyToClipboard,
+            linkify,
+            relativeTime,
+            contentTypeBadge,
         };
     },
 }).mount('#app');
