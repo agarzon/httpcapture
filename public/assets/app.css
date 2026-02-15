@@ -15,7 +15,7 @@ body {
     flex: 1;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+    scrollbar-color: rgba(163, 163, 163, 0.25) transparent;
 }
 
 .scrollable-panel::-webkit-scrollbar {
@@ -23,12 +23,12 @@ body {
 }
 
 .scrollable-panel::-webkit-scrollbar-thumb {
-    background-color: rgba(148, 163, 184, 0.45);
+    background-color: rgba(163, 163, 163, 0.3);
     border-radius: 999px;
 }
 
 .hljs {
-    color: #c9d1d9;
+    color: #d4d4d4;
     background: transparent;
 }
 
@@ -39,84 +39,86 @@ body {
 .hljs-template-variable,
 .hljs-type,
 .hljs-variable.language_ {
-    color: #ff7b72;
+    color: #f87171;
 }
 
 .hljs-title,
 .hljs-title.class_,
 .hljs-title.class_.inherited__,
 .hljs-title.function_ {
-    color: #d2a8ff;
+    color: #c084fc;
 }
 
 .hljs-attr,
 .hljs-attribute,
-.hljs-literal,
-.hljs-meta,
-.hljs-number,
-.hljs-operator,
 .hljs-variable,
 .hljs-selector-attr,
 .hljs-selector-class,
 .hljs-selector-id {
-    color: #79c0ff;
+    color: #f97316;
+}
+
+.hljs-literal,
+.hljs-number,
+.hljs-operator {
+    color: #c084fc;
 }
 
 .hljs-regexp,
 .hljs-string,
 .hljs-meta .hljs-string {
-    color: #a5d6ff;
+    color: #a3e635;
 }
 
 .hljs-built_in,
 .hljs-symbol {
-    color: #ffa657;
+    color: #fbbf24;
 }
 
 .hljs-comment,
 .hljs-code,
 .hljs-formula {
-    color: #8b949e;
+    color: #525252;
 }
 
 .hljs-name,
 .hljs-quote,
 .hljs-selector-tag,
 .hljs-selector-pseudo {
-    color: #7ee787;
+    color: #a3e635;
 }
 
 .hljs-subst {
-    color: #c9d1d9;
+    color: #d4d4d4;
 }
 
 .hljs-section {
-    color: #1f6feb;
+    color: #38bdf8;
     font-weight: bold;
 }
 
 .hljs-bullet {
-    color: #f2cc60;
+    color: #fbbf24;
 }
 
 .hljs-emphasis {
-    color: #c9d1d9;
+    color: #d4d4d4;
     font-style: italic;
 }
 
 .hljs-strong {
-    color: #c9d1d9;
+    color: #d4d4d4;
     font-weight: bold;
 }
 
 .hljs-addition {
-    color: #aff5b4;
-    background-color: #033a16;
+    color: #a3e635;
+    background-color: rgba(163, 230, 53, 0.1);
 }
 
 .hljs-deletion {
-    color: #ffdcd7;
-    background-color: #67060c;
+    color: #f87171;
+    background-color: rgba(248, 113, 113, 0.1);
 }
 
 @media (max-width: 640px) {
