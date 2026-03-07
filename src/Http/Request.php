@@ -102,20 +102,44 @@ final class Request
         }
 
         // Then check X-Forwarded-For (may be overwritten by proxies like Traefik)
-        $forwarded = $headers['X-Forwarded-For'] ?? $headers['Forwarded'] ?? '';
-        if (!empty($forwarded)) {
-            if (str_contains($forwarded, ',')) {
-                $forwarded = trim(explode(',', $forwarded)[0]);
+        $forwardedFor = $headers['X-Forwarded-For'] ?? '';
+        if (!empty($forwardedFor)) {
+            if (str_contains($forwardedFor, ',')) {
+                $forwardedFor = trim(explode(',', $forwardedFor)[0]);
             }
-            $forwarded = trim($forwarded);
-            if ($forwarded !== '') {
-                return $forwarded;
+            $forwardedFor = trim($forwardedFor);
+            if ($forwardedFor !== '') {
+                return $forwardedFor;
+            }
+        }
+
+        $forwarded = $headers['Forwarded'] ?? '';
+        if (is_string($forwarded)) {
+            $forwardedFor = self::parseForwardedFor($forwarded);
+            if ($forwardedFor !== null) {
+                return $forwardedFor;
             }
         }
 
         // Fallback to REMOTE_ADDR
         $remoteAddr = $server['REMOTE_ADDR'] ?? '0.0.0.0';
         return is_string($remoteAddr) ? $remoteAddr : '0.0.0.0';
+    }
+
+    private static function parseForwardedFor(string $header): ?string
+    {
+        foreach (explode(',', $header) as $entry) {
+            if (!preg_match('/(?:^|;)\s*for=(?:"?\[?)([^;\]",]+)(?:\]?"?)/i', trim($entry), $matches)) {
+                continue;
+            }
+
+            $value = trim($matches[1]);
+            if ($value !== '' && strtolower($value) !== 'unknown') {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     public function getMethod(): string

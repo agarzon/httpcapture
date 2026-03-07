@@ -44,6 +44,13 @@ final class Response
     /**
      * @param array<string, string> $headers
      */
+    public static function markdown(string $body, int $statusCode = 200, array $headers = []): self
+    {
+        $headers = array_merge(['Content-Type' => 'text/markdown; charset=UTF-8'], $headers);
+
+        return new self($body, $statusCode, $headers);
+    }
+
     public static function empty(int $statusCode = 204, array $headers = []): self
     {
         return new self('', $statusCode, $headers);

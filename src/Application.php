@@ -6,6 +6,7 @@ namespace HttpCapture;
 
 use HttpCapture\Controller\CaptureController;
 use HttpCapture\Controller\RequestsController;
+use HttpCapture\Formatter\MarkdownFormatter;
 use HttpCapture\Http\Request;
 use HttpCapture\Http\RequestFilter;
 use HttpCapture\Http\Response;
@@ -27,7 +28,7 @@ final class Application
         $repository = new RequestRepository($connection);
 
         $this->router = new Router();
-        $this->requestsController = new RequestsController($repository);
+        $this->requestsController = new RequestsController($repository, new MarkdownFormatter());
         $this->captureController = new CaptureController($repository);
         $this->requestFilter = $requestFilter ?? RequestFilter::default();
 
@@ -43,8 +44,8 @@ final class Application
             return $matched;
         }
 
-        if (str_starts_with($request->getPath(), '/api')) {
-            return Response::json(['message' => 'Route not found'], 404);
+        if ($this->isReservedApiPath($request)) {
+            return $this->apiNotFoundResponse($request);
         }
 
         if ($request->getMethod() === 'GET' && $this->shouldRenderUi($request)) {
@@ -91,5 +92,28 @@ final class Application
         $body = file_get_contents(__DIR__ . '/../public/index.html');
 
         return Response::html($body ?: '<h1>httpcapture</h1>');
+    }
+
+    private function isReservedApiPath(Request $request): bool
+    {
+        $path = $request->getPath();
+
+        return $path === '/api' || str_starts_with($path, '/api/');
+    }
+
+    private function apiNotFoundResponse(Request $request): Response
+    {
+        if ($this->wantsMarkdown($request)) {
+            return Response::markdown("Route not found.\n", 404);
+        }
+
+        return Response::json(['message' => 'Route not found'], 404);
+    }
+
+    private function wantsMarkdown(Request $request): bool
+    {
+        $accept = $request->getHeader('Accept');
+
+        return is_string($accept) && str_contains($accept, 'text/markdown');
     }
 }

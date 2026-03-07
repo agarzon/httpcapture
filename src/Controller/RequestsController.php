@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace HttpCapture\Controller;
 
+use HttpCapture\Formatter\MarkdownFormatter;
 use HttpCapture\Http\Request;
 use HttpCapture\Http\Response;
 use HttpCapture\Persistence\RequestRepository;
 
 final class RequestsController
 {
-    public function __construct(private readonly RequestRepository $repository)
-    {
+    public function __construct(
+        private readonly RequestRepository $repository,
+        private readonly MarkdownFormatter $markdownFormatter,
+    ) {
     }
 
     public function index(Request $request): Response
@@ -25,15 +28,21 @@ final class RequestsController
         $items = $this->repository->all($perPage, $offset);
         $lastPage = (int) max(1, (int) ceil($total / $perPage));
 
+        $meta = [
+            'count' => count($items),
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'last_page' => $lastPage,
+        ];
+
+        if ($this->wantsMarkdown($request)) {
+            return Response::markdown($this->markdownFormatter->formatList($items, $meta));
+        }
+
         return Response::json([
             'data' => $items,
-            'meta' => [
-                'count' => count($items),
-                'total' => $total,
-                'page' => $page,
-                'per_page' => $perPage,
-                'last_page' => $lastPage,
-            ],
+            'meta' => $meta,
         ]);
     }
 
@@ -42,7 +51,11 @@ final class RequestsController
         $record = $this->repository->find($id);
 
         if ($record === null) {
-            return Response::json(['message' => 'Request not found'], 404);
+            return $this->notFoundResponse($request);
+        }
+
+        if ($this->wantsMarkdown($request)) {
+            return Response::markdown($this->markdownFormatter->formatSingle($record));
         }
 
         return Response::json(['data' => $record]);
@@ -53,10 +66,14 @@ final class RequestsController
         $record = $this->repository->find($id);
 
         if ($record === null) {
-            return Response::json(['message' => 'Request not found'], 404);
+            return $this->notFoundResponse($request);
         }
 
         $this->repository->delete($id);
+
+        if ($this->wantsMarkdown($request)) {
+            return Response::markdown("Request #{$id} deleted.\n");
+        }
 
         return Response::json(['message' => 'Request deleted', 'data' => ['id' => $id]]);
     }
@@ -65,6 +82,26 @@ final class RequestsController
     {
         $this->repository->deleteAll();
 
+        if ($this->wantsMarkdown($request)) {
+            return Response::markdown("All requests cleared.\n");
+        }
+
         return Response::json(['message' => 'All requests cleared']);
+    }
+
+    private function wantsMarkdown(Request $request): bool
+    {
+        $accept = $request->getHeader('Accept');
+
+        return is_string($accept) && str_contains($accept, 'text/markdown');
+    }
+
+    private function notFoundResponse(Request $request): Response
+    {
+        if ($this->wantsMarkdown($request)) {
+            return Response::markdown("Request not found.\n", 404);
+        }
+
+        return Response::json(['message' => 'Request not found'], 404);
     }
 }

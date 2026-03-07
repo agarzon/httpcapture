@@ -44,6 +44,23 @@ No external dependencies. No configuration required. Just run and capture.
 
 The list endpoint accepts `page` (1-based) and `per_page` (max 100, default 10) query parameters.
 
+### Markdown for AI Agents
+
+All API endpoints support content negotiation. Send `Accept: text/markdown` to receive a clean, readable markdown response instead of JSON — ideal for LLMs, MCP clients, and automated tools:
+
+```bash
+# List captures as markdown
+curl -H "Accept: text/markdown" http://localhost:8080/api/requests
+
+# Single capture as markdown
+curl -H "Accept: text/markdown" http://localhost:8080/api/requests/1
+
+# Delete also works
+curl -X DELETE -H "Accept: text/markdown" http://localhost:8080/api/requests/1
+```
+
+Without the header, all endpoints return JSON as usual.
+
 ## Configuration
 
 | Setting | Default | Details |
