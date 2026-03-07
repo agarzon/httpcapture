@@ -1,8 +1,10 @@
 {
-    "name": "httpcapture/httpcapture",
+    "name": "agarzon/httpcapture",
     "description": "Capture inbound HTTP requests for debugging webhooks and APIs.",
     "license": "MIT",
     "type": "project",
+    "homepage": "https://github.com/agarzon/httpcapture",
+    "keywords": ["http", "webhook", "capture", "debugging", "inspector"],
     "require": {
         "php": "^8.4"
     },
