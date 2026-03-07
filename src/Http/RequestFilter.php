@@ -42,8 +42,9 @@ final class RequestFilter
     public function ignoreExtensions(string ...$extensions): self
     {
         $normalized = array_filter(array_map(
-            static fn (string $extension): string => ltrim(strtolower($extension), '.')
-        , $extensions));
+            static fn (string $extension): string => ltrim(strtolower($extension), '.'),
+            $extensions
+        ));
 
         if ($normalized === []) {
             return $this;
