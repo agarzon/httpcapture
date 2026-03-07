@@ -43,6 +43,9 @@
         </script>
         <script defer src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
         <link rel="stylesheet" href="/assets/app.css" />
+        <style>
+            #app[v-cloak] { display: none; }
+        </style>
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
         <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
@@ -58,7 +61,7 @@
         <div class="bg-noise" aria-hidden="true"></div>
         <div class="bg-grid" aria-hidden="true"></div>
 
-        <div id="app" class="relative z-10 flex min-h-screen flex-col">
+        <div id="app" v-cloak class="relative z-10 flex min-h-screen flex-col">
             <!-- Header -->
             <header class="mx-auto w-full max-w-[1200px] px-6 pt-10">
                 <div class="glass-panel rounded-2xl p-8">
