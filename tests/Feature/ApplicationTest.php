@@ -197,6 +197,22 @@ final class ApplicationTest extends TestCase
         $this->assertSame('', $listPayload['data'][0]['body']);
     }
 
+    public function testApiPrefixLookalikePathsAreStillCaptured(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/apiary',
+            'HTTP_HOST' => 'example.test',
+        ], 'payload');
+
+        $this->assertSame(201, $response->getStatusCode());
+
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('/apiary', $payload['data']['path']);
+    }
+
     public function testDefaultFilterIgnoresFaviconRequests(): void
     {
         $app = new Application($this->databasePath);
@@ -248,5 +264,212 @@ final class ApplicationTest extends TestCase
         $payload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $this->assertSame(1, $payload['meta']['count']);
         $this->assertSame('/webhook', $payload['data'][0]['path']);
+    }
+
+    public function testForwardedHeaderUsesForValueAsClientIp(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/proxy-test',
+            'HTTP_HOST' => 'example.test',
+            'HTTP_FORWARDED' => 'for=203.0.113.10;proto=https;by=203.0.113.20',
+            'REMOTE_ADDR' => '10.0.0.5',
+        ], 'payload');
+
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('203.0.113.10', $payload['data']['client_ip']);
+    }
+
+    public function testMarkdownListResponse(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/webhook',
+            'HTTP_HOST' => 'example.test',
+            'HTTP_CONTENT_TYPE' => 'application/json',
+        ], '{"status":"ok"}');
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests',
+            'HTTP_ACCEPT' => 'text/markdown',
+        ], '');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/markdown; charset=UTF-8', $response->getHeaders()['Content-Type']);
+        $this->assertStringContainsString('# Captured Requests', $response->getBody());
+        $this->assertStringContainsString('## #', $response->getBody());
+        $this->assertStringContainsString('### Headers', $response->getBody());
+    }
+
+    public function testMarkdownSingleResponse(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/test-endpoint',
+            'HTTP_HOST' => 'example.test',
+        ], '{"hello":"world"}');
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/1',
+            'HTTP_ACCEPT' => 'text/markdown',
+        ], '');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/markdown; charset=UTF-8', $response->getHeaders()['Content-Type']);
+        $this->assertStringContainsString('## #1', $response->getBody());
+        $this->assertStringContainsString('POST /test-endpoint', $response->getBody());
+        $this->assertStringContainsString('### Body', $response->getBody());
+    }
+
+    public function testMarkdownSingleNotFoundResponse(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/999',
+            'HTTP_ACCEPT' => 'text/markdown',
+        ], '');
+
+        $this->assertSame(404, $response->getStatusCode());
+        $this->assertSame('text/markdown; charset=UTF-8', $response->getHeaders()['Content-Type']);
+        $this->assertSame("Request not found.\n", $response->getBody());
+    }
+
+    public function testMarkdownApiRouteNotFoundResponse(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/unknown',
+            'HTTP_ACCEPT' => 'text/markdown',
+        ], '');
+
+        $this->assertSame(404, $response->getStatusCode());
+        $this->assertSame('text/markdown; charset=UTF-8', $response->getHeaders()['Content-Type']);
+        $this->assertSame("Route not found.\n", $response->getBody());
+    }
+
+    public function testJsonStillDefaultWithoutAcceptHeader(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/webhook',
+            'HTTP_HOST' => 'example.test',
+        ], 'data');
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests',
+        ], '');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('application/json', $response->getHeaders()['Content-Type']);
+
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertArrayHasKey('data', $payload);
+        $this->assertArrayHasKey('meta', $payload);
+    }
+
+    public function testMarkdownRedactsSensitiveHeaders(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/secret-test',
+            'HTTP_HOST' => 'example.test',
+            'HTTP_AUTHORIZATION' => 'Bearer super-secret-token',
+            'HTTP_X_API_KEY' => 'sk-12345',
+            'HTTP_COOKIE' => 'session=abc123',
+            'HTTP_X_CUSTOM' => 'visible-value',
+        ], '{}');
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/1',
+            'HTTP_ACCEPT' => 'text/markdown',
+        ], '');
+
+        $body = $response->getBody();
+        $this->assertStringContainsString('[REDACTED]', $body);
+        $this->assertStringNotContainsString('super-secret-token', $body);
+        $this->assertStringNotContainsString('sk-12345', $body);
+        $this->assertStringNotContainsString('abc123', $body);
+        $this->assertStringContainsString('visible-value', $body);
+
+        // Verify JSON still shows full values
+        $jsonResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/1',
+        ], '');
+
+        $jsonBody = $jsonResponse->getBody();
+        $this->assertStringContainsString('super-secret-token', $jsonBody);
+        $this->assertStringContainsString('sk-12345', $jsonBody);
+    }
+
+    public function testMarkdownRedactsSensitiveHeaderVariants(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/secret-variants',
+            'HTTP_HOST' => 'example.test',
+            'HTTP_API_KEY' => 'api-key-value',
+            'HTTP_X_FORWARDED_ACCESS_TOKEN' => 'access-token-value',
+            'HTTP_X_AUTH_SECRET' => 'auth-secret-value',
+            'HTTP_X_TRACE_ID' => 'trace-visible',
+        ], '{}');
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/1',
+            'HTTP_ACCEPT' => 'text/markdown',
+        ], '');
+
+        $body = $response->getBody();
+        $this->assertStringContainsString('| Api-Key | [REDACTED] |', $body);
+        $this->assertStringContainsString('| X-Forwarded-Access-Token | [REDACTED] |', $body);
+        $this->assertStringContainsString('| X-Auth-Secret | [REDACTED] |', $body);
+        $this->assertStringContainsString('| X-Trace-Id | trace-visible |', $body);
+        $this->assertStringNotContainsString('api-key-value', $body);
+        $this->assertStringNotContainsString('access-token-value', $body);
+        $this->assertStringNotContainsString('auth-secret-value', $body);
+    }
+
+    public function testMarkdownOmitsEmptySections(): void
+    {
+        $app = new Application($this->databasePath);
+
+        // GET request — no body, no form_data, no files
+        $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/simple',
+            'HTTP_HOST' => 'example.test',
+        ], '');
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/1',
+            'HTTP_ACCEPT' => 'text/markdown',
+        ], '');
+
+        $body = $response->getBody();
+        $this->assertStringNotContainsString('### Body', $body);
+        $this->assertStringNotContainsString('### Form Data', $body);
+        $this->assertStringNotContainsString('### Files', $body);
     }
 }

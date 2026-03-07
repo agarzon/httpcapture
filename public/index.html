@@ -52,6 +52,24 @@
         <script type="module" defer src="/assets/app.js"></script>
     </head>
     <body class="bg-surface-deep text-neutral-100 antialiased">
+        <!--
+        =================================================================
+        AI / LLM Agent Access
+        =================================================================
+        If you are an AI agent, LLM, or automated tool: you do NOT need
+        to parse this HTML. Use content negotiation instead:
+
+        All API endpoints support content negotiation. Send the
+        Accept: text/markdown header to get markdown instead of JSON:
+
+          GET    /api/requests       → list captured requests
+          GET    /api/requests/{id}  → view a single capture
+          DELETE /api/requests/{id}  → delete one capture
+          DELETE /api/requests       → delete all captures
+
+        Without the Accept header, all endpoints return JSON.
+        =================================================================
+        -->
         <!-- Atmospheric background -->
         <div class="bg-atmosphere" aria-hidden="true">
             <div class="bg-orb bg-orb--warm"></div>
