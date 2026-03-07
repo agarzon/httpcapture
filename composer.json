@@ -1,6 +1,7 @@
 {
     "name": "httpcapture/httpcapture",
     "description": "Capture inbound HTTP requests for debugging webhooks and APIs.",
+    "license": "MIT",
     "type": "project",
     "require": {
         "php": "^8.4"
