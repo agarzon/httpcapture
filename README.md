@@ -7,6 +7,8 @@ Capture, inspect, and debug inbound HTTP requests and webhooks in real-time.
 [![Docker Pulls](https://img.shields.io/docker/pulls/agarzon/httpcapture)](https://hub.docker.com/r/agarzon/httpcapture)
 ![PHP](https://img.shields.io/badge/php-%5E8.4-8892BF)
 
+![httpcapture screenshot](public/screenshot.png)
+
 ## Quick Start
 
 ```bash
