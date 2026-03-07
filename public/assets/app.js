@@ -7,6 +7,7 @@ createApp({
         const selected = ref(null);
         const loading = ref(false);
         const error = ref('');
+        const copySuccess = ref(false);
         const page = ref(1);
         const perPage = ref(10);
         const total = ref(0);
@@ -165,24 +166,21 @@ createApp({
             }
         };
 
-        const METHOD_THEME_MAP = {
-            get: 'border-sky-400/60 bg-sky-400/10 text-sky-200',
-            post: 'border-emerald-400/60 bg-emerald-400/10 text-emerald-200',
-            delete: 'border-rose-400/60 bg-rose-400/10 text-rose-200',
-            put: 'border-amber-400/60 bg-amber-400/10 text-amber-200',
-            patch: 'border-fuchsia-400/60 bg-fuchsia-400/10 text-fuchsia-200',
-            head: 'border-cyan-300/60 bg-cyan-300/10 text-cyan-100',
-            options: 'border-indigo-400/60 bg-indigo-400/10 text-indigo-200',
-            default: 'border-slate-400/50 bg-slate-400/10 text-slate-200',
+        const METHOD_BADGE_MAP = {
+            get: 'method-badge--get',
+            post: 'method-badge--post',
+            delete: 'method-badge--delete',
+            put: 'method-badge--put',
+            patch: 'method-badge--patch',
+            head: 'method-badge--head',
+            options: 'method-badge--options',
+            default: 'method-badge--default',
         };
 
-        const methodClasses = (method) => {
-            if (!method) {
-                return METHOD_THEME_MAP.default;
-            }
-
+        const methodBadgeClass = (method) => {
+            if (!method) return METHOD_BADGE_MAP.default;
             const normalized = String(method).toLowerCase();
-            return METHOD_THEME_MAP[normalized] ?? METHOD_THEME_MAP.default;
+            return METHOD_BADGE_MAP[normalized] ?? METHOD_BADGE_MAP.default;
         };
 
         const sections = ref({
@@ -197,15 +195,15 @@ createApp({
             sections.value[name] = !sections.value[name];
         };
 
-        const copyToClipboard = async (text, event) => {
+        let copyTimeout = null;
+        const copyToClipboard = async (text) => {
             try {
                 await navigator.clipboard.writeText(text);
-                const btn = event.currentTarget;
-                const tooltip = document.createElement('div');
-                tooltip.className = 'absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-700 px-2 py-1 text-xs text-white shadow-lg pointer-events-none';
-                tooltip.textContent = 'Copied!';
-                btn.appendChild(tooltip);
-                setTimeout(() => tooltip.remove(), 1500);
+                copySuccess.value = true;
+                window.clearTimeout(copyTimeout);
+                copyTimeout = window.setTimeout(() => {
+                    copySuccess.value = false;
+                }, 2000);
             } catch (err) {
                 setError('Failed to copy to clipboard');
             }
@@ -231,7 +229,7 @@ createApp({
             while ((match = urlRegex.exec(str)) !== null) {
                 result += escapeHtml(str.slice(lastIndex, match.index));
                 const escapedUrl = escapeHtml(match[0]);
-                result += `<a href="${escapedUrl}" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 underline decoration-sky-400/30">${escapedUrl}</a>`;
+                result += `<a href="${escapedUrl}" target="_blank" rel="noopener" class="data-link">${escapedUrl}</a>`;
                 lastIndex = match.index + match[0].length;
             }
             result += escapeHtml(str.slice(lastIndex));
@@ -265,7 +263,7 @@ createApp({
             if (value.includes('application/xml') || value.includes('text/xml')) return { show: true, label: 'XML' };
             if (value.includes('text/plain')) return { show: true, label: 'Text' };
             if (value.includes('application/x-www-form-urlencoded')) return { show: true, label: 'UrlEncoded' };
-            
+
             return { show: false, label: '' };
         };
 
@@ -297,18 +295,13 @@ createApp({
 
             if (isJson && window.hljs) {
                 content = window.hljs.highlight(raw, { language: 'json' }).value;
-                // Post-process hljs HTML to linkify URLs inside string spans.
-                // hljs escapes quotes to &quot; so match that entity, not literal ".
-                // Content is already HTML-escaped by hljs, so use inline regex
-                // instead of linkify() which escapes again.
                 content = content.replace(/<span class="hljs-string">&quot;(.*?)&quot;<\/span>/g, (match, inner) => {
                     const linked = inner.replace(/(https?:\/\/[^\s"<>]+)/g, (url) => {
-                        return `<a href="${url}" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 underline decoration-sky-400/30">${url}</a>`;
+                        return `<a href="${url}" target="_blank" rel="noopener" class="data-link">${url}</a>`;
                     });
                     return `<span class="hljs-string">&quot;${linked}&quot;</span>`;
                 });
             } else {
-                // linkify() escapes HTML internally, no need to pre-escape
                 content = linkify(raw);
             }
 
@@ -366,6 +359,7 @@ createApp({
             selected,
             loading,
             error,
+            copySuccess,
             page,
             perPage,
             total,
@@ -388,7 +382,7 @@ createApp({
             hasQuery,
             hasFormData,
             hasFiles,
-            methodClasses,
+            methodBadgeClass,
             currentYear,
             sections,
             toggleSection,
