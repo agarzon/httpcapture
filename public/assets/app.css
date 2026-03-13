@@ -20,15 +20,15 @@
     --border-divider: rgba(255, 255, 255, 0.03);
 
     /* Brand */
-    --brand-core: #fb923c;
-    --brand-glow: rgba(251, 146, 60, 0.15);
-    --brand-bg: rgba(251, 146, 60, 0.08);
-    --brand-bg-hover: rgba(251, 146, 60, 0.15);
-    --brand-border: rgba(251, 146, 60, 0.3);
-    --brand-border-hover: rgba(251, 146, 60, 0.5);
-    --brand-border-active: rgba(251, 146, 60, 0.35);
-    --brand-shadow: rgba(251, 146, 60, 0.1);
-    --brand-shadow-subtle: rgba(251, 146, 60, 0.08);
+    --brand-core: #38bdf8;
+    --brand-glow: rgba(56, 189, 248, 0.15);
+    --brand-bg: rgba(56, 189, 248, 0.08);
+    --brand-bg-hover: rgba(56, 189, 248, 0.15);
+    --brand-border: rgba(56, 189, 248, 0.3);
+    --brand-border-hover: rgba(56, 189, 248, 0.5);
+    --brand-border-active: rgba(56, 189, 248, 0.35);
+    --brand-shadow: rgba(56, 189, 248, 0.1);
+    --brand-shadow-subtle: rgba(56, 189, 248, 0.08);
 
     /* Semantic: success */
     --success-text: #6ee7b7;
@@ -186,7 +186,7 @@ body {
 .bg-orb--warm {
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(251, 146, 60, 0.25), transparent 70%);
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent 70%);
     top: -10%;
     left: -5%;
     animation-delay: 0s;
@@ -204,7 +204,7 @@ body {
 .bg-orb--accent {
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.1), transparent 70%);
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.1), transparent 70%);
     top: 40%;
     right: 20%;
     animation-delay: -14s;
@@ -792,7 +792,7 @@ a.data-link:hover {
 
 .hljs-attr, .hljs-attribute, .hljs-variable,
 .hljs-selector-attr, .hljs-selector-class, .hljs-selector-id {
-    color: #fb923c;
+    color: #38bdf8;
 }
 
 .hljs-literal, .hljs-number, .hljs-operator {
