@@ -48,17 +48,23 @@ final class DatabaseConnection
             );
         SQL);
 
-        $this->ensureColumn('form_data', 'TEXT');
-        $this->ensureColumn('files', 'TEXT');
+        $this->ensureMigrations();
     }
 
-    private function ensureColumn(string $column, string $definition): void
+    private function ensureMigrations(): void
     {
         $statement = $this->pdo->query('PRAGMA table_info(requests)');
         $columns = $statement ? $statement->fetchAll(PDO::FETCH_COLUMN, 1) : [];
 
-        if (!in_array($column, $columns, true)) {
-            $this->pdo->exec(sprintf('ALTER TABLE requests ADD COLUMN %s %s', $column, $definition));
+        $migrations = [
+            'form_data' => 'TEXT',
+            'files' => 'TEXT',
+        ];
+
+        foreach ($migrations as $column => $definition) {
+            if (!in_array($column, $columns, true)) {
+                $this->pdo->exec(sprintf('ALTER TABLE requests ADD COLUMN %s %s', $column, $definition));
+            }
         }
     }
 }

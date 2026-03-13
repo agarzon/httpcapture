@@ -96,9 +96,19 @@ final class RequestRepository
             ':created_at' => $createdAt,
         ]);
 
-        $id = (int) $this->pdo->lastInsertId();
-
-        return $this->find($id) ?? [];
+        return [
+            'id' => (int) $this->pdo->lastInsertId(),
+            'method' => $request['method'],
+            'path' => $request['path'],
+            'full_url' => $request['full_url'],
+            'query_params' => $request['query_params'],
+            'headers' => $request['headers'],
+            'body' => $request['body'],
+            'form_data' => $request['form_data'],
+            'files' => $request['files'],
+            'client_ip' => $request['client_ip'],
+            'created_at' => $createdAt,
+        ];
     }
 
     public function delete(int $id): bool

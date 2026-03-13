@@ -26,7 +26,7 @@ final class RequestsController
 
         $total = $this->repository->count();
         $items = $this->repository->all($perPage, $offset);
-        $lastPage = (int) max(1, (int) ceil($total / $perPage));
+        $lastPage = max(1, (int) ceil($total / $perPage));
 
         $meta = [
             'count' => count($items),
@@ -36,7 +36,7 @@ final class RequestsController
             'last_page' => $lastPage,
         ];
 
-        if ($this->wantsMarkdown($request)) {
+        if ($request->wantsMarkdown()) {
             return Response::markdown($this->markdownFormatter->formatList($items, $meta));
         }
 
@@ -54,7 +54,7 @@ final class RequestsController
             return $this->notFoundResponse($request);
         }
 
-        if ($this->wantsMarkdown($request)) {
+        if ($request->wantsMarkdown()) {
             return Response::markdown($this->markdownFormatter->formatSingle($record));
         }
 
@@ -71,7 +71,7 @@ final class RequestsController
 
         $this->repository->delete($id);
 
-        if ($this->wantsMarkdown($request)) {
+        if ($request->wantsMarkdown()) {
             return Response::markdown("Request #{$id} deleted.\n");
         }
 
@@ -82,23 +82,16 @@ final class RequestsController
     {
         $this->repository->deleteAll();
 
-        if ($this->wantsMarkdown($request)) {
+        if ($request->wantsMarkdown()) {
             return Response::markdown("All requests cleared.\n");
         }
 
         return Response::json(['message' => 'All requests cleared']);
     }
 
-    private function wantsMarkdown(Request $request): bool
-    {
-        $accept = $request->getHeader('Accept');
-
-        return is_string($accept) && str_contains($accept, 'text/markdown');
-    }
-
     private function notFoundResponse(Request $request): Response
     {
-        if ($this->wantsMarkdown($request)) {
+        if ($request->wantsMarkdown()) {
             return Response::markdown("Request not found.\n", 404);
         }
 

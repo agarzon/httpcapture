@@ -103,17 +103,10 @@ final class Application
 
     private function apiNotFoundResponse(Request $request): Response
     {
-        if ($this->wantsMarkdown($request)) {
+        if ($request->wantsMarkdown()) {
             return Response::markdown("Route not found.\n", 404);
         }
 
         return Response::json(['message' => 'Route not found'], 404);
-    }
-
-    private function wantsMarkdown(Request $request): bool
-    {
-        $accept = $request->getHeader('Accept');
-
-        return is_string($accept) && str_contains($accept, 'text/markdown');
     }
 }

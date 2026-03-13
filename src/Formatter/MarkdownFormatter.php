@@ -69,7 +69,7 @@ final class MarkdownFormatter
         ];
 
         // Query Parameters
-        $queryParams = $this->decodeJsonField($item['query_params'] ?? null);
+        $queryParams = $this->ensureArray($item['query_params'] ?? null);
         if (!empty($queryParams)) {
             $lines[] = '';
             $lines[] = '### Query Parameters';
@@ -81,7 +81,7 @@ final class MarkdownFormatter
         }
 
         // Headers
-        $headers = $this->decodeJsonField($item['headers'] ?? null);
+        $headers = $this->ensureArray($item['headers'] ?? null);
         if (!empty($headers)) {
             $lines[] = '';
             $lines[] = '### Headers';
@@ -105,7 +105,7 @@ final class MarkdownFormatter
         }
 
         // Form Data
-        $formData = $this->decodeJsonField($item['form_data'] ?? null);
+        $formData = $this->ensureArray($item['form_data'] ?? null);
         if (!empty($formData)) {
             $lines[] = '';
             $lines[] = '### Form Data';
@@ -117,7 +117,7 @@ final class MarkdownFormatter
         }
 
         // Files
-        $files = $this->decodeJsonField($item['files'] ?? null);
+        $files = $this->ensureArray($item['files'] ?? null);
         if (!empty($files)) {
             $lines[] = '';
             $lines[] = '### Files';
@@ -136,18 +136,9 @@ final class MarkdownFormatter
         return implode("\n", $lines);
     }
 
-    private function decodeJsonField(mixed $value): array
+    private function ensureArray(mixed $value): array
     {
-        if (is_array($value)) {
-            return $value;
-        }
-
-        if (is_string($value) && $value !== '') {
-            $decoded = json_decode($value, true);
-            return is_array($decoded) ? $decoded : [];
-        }
-
-        return [];
+        return is_array($value) ? $value : [];
     }
 
     private function detectLanguage(string $body): string

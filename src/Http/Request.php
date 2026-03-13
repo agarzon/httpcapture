@@ -184,6 +184,13 @@ final class Request
         return null;
     }
 
+    public function wantsMarkdown(): bool
+    {
+        $accept = $this->getHeader('Accept');
+
+        return is_string($accept) && str_contains($accept, 'text/markdown');
+    }
+
     public function getBody(): string
     {
         return $this->body;

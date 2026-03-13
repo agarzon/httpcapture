@@ -21,9 +21,9 @@ final class CaptureController
         $host = $server['HTTP_HOST'] ?? ($server['SERVER_NAME'] ?? 'localhost');
         $fullUrl = sprintf('%s://%s%s', $scheme, $host, $request->getUri());
 
-        $body = $capturePayload ? $this->resolveBody($request) : '';
         $formData = $capturePayload ? $request->getParsedBody() : [];
         $files = $capturePayload ? $request->getUploadedFiles() : [];
+        $body = $capturePayload ? $this->resolveBody($request->getBody(), $formData, $files) : '';
 
         $record = $this->repository->store([
             'method' => $request->getMethod(),
@@ -43,23 +43,18 @@ final class CaptureController
         ], $statusCode);
     }
 
-    private function resolveBody(Request $request): string
+    private function resolveBody(string $rawBody, array $formData, array $files): string
     {
-        $rawBody = $request->getBody();
-
         if ($rawBody !== '') {
             return $rawBody;
         }
 
-        $parsed = $request->getParsedBody();
-        $files = $request->getUploadedFiles();
-
-        if (empty($parsed) && empty($files)) {
+        if (empty($formData) && empty($files)) {
             return '';
         }
 
         $payload = [
-            'form' => $parsed,
+            'form' => $formData,
             'files' => $files,
         ];
 
