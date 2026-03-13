@@ -27,7 +27,7 @@ The request appears instantly in the UI.
 
 ## How It Works
 
-Any HTTP request sent to a path other than `/` and `/api/*` is automatically captured and stored in a local SQLite database. The web UI polls for new captures every 5 seconds and displays method, path, headers, query parameters, body, form data, and uploaded files.
+Any HTTP request sent to a path other than `/` and `/api/*` is automatically captured and stored in a local SQLite database. The web UI uses adaptive polling to detect new captures within ~1 second and displays method, path, headers, query parameters, body, form data, and uploaded files. When the browser tab is in the background, polling slows down automatically to reduce load.
 
 No external dependencies. No configuration required. Just run and capture.
 
@@ -37,6 +37,7 @@ No external dependencies. No configuration required. Just run and capture.
 | --- | --- | --- |
 | `GET` | `/` | Web UI |
 | `GET` | `/api/requests` | List captured requests (paginated) |
+| `GET` | `/api/requests/poll` | Lightweight change check (`latest_id`, `total`) |
 | `GET` | `/api/requests/{id}` | Retrieve a single capture |
 | `DELETE` | `/api/requests/{id}` | Delete a capture |
 | `DELETE` | `/api/requests` | Delete all captures |
@@ -65,7 +66,7 @@ Without the header, all endpoints return JSON as usual.
 
 | Setting | Default | Details |
 | --- | --- | --- |
-| Polling interval | 5 seconds | Adjust `POLLING_INTERVAL_MS` in `public/assets/app.js` |
+| Polling interval | 1s (focused) / 10s (background) | Adjust `POLL_FAST_MS` and `POLL_SLOW_MS` in `public/assets/app.js` |
 | Storage | SQLite in `storage/` | Persisted via Docker volume |
 | IP detection | `X-Forwarded-For` | Falls back to `REMOTE_ADDR` |
 
