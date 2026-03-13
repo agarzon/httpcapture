@@ -66,6 +66,7 @@ final class Application
     private function registerRoutes(): void
     {
         $this->router->add('GET', '/api/requests', fn (Request $request): Response => $this->requestsController->index($request));
+        $this->router->add('GET', '/api/requests/poll', fn (Request $request): Response => $this->requestsController->poll($request));
         $this->router->add('GET', '/api/requests/{id}', fn (Request $request, array $params): Response => $this->requestsController->show($request, (int) $params['id']));
         $this->router->add('DELETE', '/api/requests/{id}', fn (Request $request, array $params): Response => $this->requestsController->destroy($request, (int) $params['id']));
         $this->router->add('DELETE', '/api/requests', fn (Request $request): Response => $this->requestsController->destroyAll($request));

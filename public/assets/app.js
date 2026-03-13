@@ -1,5 +1,6 @@
 const { createApp, ref, computed, onMounted, onBeforeUnmount } = Vue;
-const POLLING_INTERVAL_MS = 5_000;
+const POLL_FAST_MS = 1_000;
+const POLL_SLOW_MS = 10_000;
 
 createApp({
     setup() {
@@ -17,7 +18,9 @@ createApp({
         const total = ref(0);
         const lastPage = ref(1);
         const currentYear = new Date().getFullYear();
-        let intervalId = null;
+        let pollIntervalId = null;
+        let knownLatestId = null;
+        let knownTotal = 0;
 
         const setError = (message) => {
             error.value = message;
@@ -357,19 +360,57 @@ createApp({
         const goToPreviousPage = () => changePage(page.value - 1);
         const goToNextPage = () => changePage(page.value + 1);
 
+        const checkForUpdates = async () => {
+            try {
+                const payload = await requestJson('/api/requests/poll');
+                const newLatestId = payload.latest_id;
+                const newTotal = payload.total;
+
+                if (newLatestId !== knownLatestId || newTotal !== knownTotal) {
+                    knownLatestId = newLatestId;
+                    knownTotal = newTotal;
+                    await fetchRequests();
+                }
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        const startPolling = () => {
+            stopPolling();
+            const interval = document.hidden ? POLL_SLOW_MS : POLL_FAST_MS;
+            pollIntervalId = window.setInterval(checkForUpdates, interval);
+        };
+
+        const stopPolling = () => {
+            if (pollIntervalId) {
+                window.clearInterval(pollIntervalId);
+                pollIntervalId = null;
+            }
+        };
+
+        const onVisibilityChange = () => {
+            startPolling();
+            if (!document.hidden) {
+                checkForUpdates();
+            }
+        };
+
         onMounted(async () => {
             if (typeof window !== 'undefined' && window.hljs) {
                 window.hljs.configure({ ignoreUnescapedHTML: true });
             }
 
             await refresh();
-            intervalId = window.setInterval(fetchRequests, POLLING_INTERVAL_MS);
+            knownLatestId = requests.value.length ? requests.value[0].id : null;
+            knownTotal = total.value;
+            startPolling();
+            document.addEventListener('visibilitychange', onVisibilityChange);
         });
 
         onBeforeUnmount(() => {
-            if (intervalId) {
-                window.clearInterval(intervalId);
-            }
+            stopPolling();
+            document.removeEventListener('visibilitychange', onVisibilityChange);
         });
 
         return {

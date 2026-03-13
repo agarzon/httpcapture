@@ -42,6 +42,16 @@ final class RequestRepository
         return (int) ($result['aggregate'] ?? 0);
     }
 
+    public function latestId(): ?int
+    {
+        $statement = $this->pdo->query('SELECT MAX(id) as latest_id FROM requests;');
+        $result = $statement ? $statement->fetch(PDO::FETCH_ASSOC) : null;
+
+        $value = $result['latest_id'] ?? null;
+
+        return $value !== null ? (int) $value : null;
+    }
+
     /**
      * @return array<string, mixed>|null
      */

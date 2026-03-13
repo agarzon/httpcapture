@@ -78,6 +78,25 @@ final class RequestsController
         return Response::json(['message' => 'Request deleted', 'data' => ['id' => $id]]);
     }
 
+    public function poll(Request $request): Response
+    {
+        $latestId = $this->repository->latestId();
+        $total = $this->repository->count();
+
+        $data = [
+            'latest_id' => $latestId,
+            'total' => $total,
+        ];
+
+        if ($request->wantsMarkdown()) {
+            $md = "**Latest ID:** " . ($latestId ?? 'none') . "\n";
+            $md .= "**Total:** {$total}\n";
+            return Response::markdown($md);
+        }
+
+        return Response::json($data);
+    }
+
     public function destroyAll(Request $request): Response
     {
         $this->repository->deleteAll();

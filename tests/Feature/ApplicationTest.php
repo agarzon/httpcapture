@@ -450,6 +450,68 @@ final class ApplicationTest extends TestCase
         $this->assertStringNotContainsString('auth-secret-value', $body);
     }
 
+    public function testPollEndpointReturnsLatestIdAndTotal(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/hook-one',
+            'HTTP_HOST' => 'example.test',
+        ], 'first');
+
+        $app->handle([
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/hook-two',
+            'HTTP_HOST' => 'example.test',
+        ], 'second');
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/poll',
+        ], '');
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(2, $payload['latest_id']);
+        $this->assertSame(2, $payload['total']);
+    }
+
+    public function testPollEndpointWhenEmpty(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/poll',
+        ], '');
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertNull($payload['latest_id']);
+        $this->assertSame(0, $payload['total']);
+    }
+
+    public function testPollEndpointNotCaptured(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests/poll',
+        ], '');
+
+        $listResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests',
+        ], '');
+
+        $payload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(0, $payload['meta']['count']);
+    }
+
     public function testMarkdownOmitsEmptySections(): void
     {
         $app = new Application($this->databasePath);
