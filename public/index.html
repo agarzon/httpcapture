@@ -3,12 +3,18 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>httpcapture</title>
+        <title>httpcapture — HTTP Request Capture Tool</title>
+        <meta name="description" content="Capture and inspect inbound webhooks and HTTP calls in real-time. A lightweight, self-hosted HTTP debugging tool." />
+        <meta property="og:title" content="httpcapture — HTTP Request Capture Tool" />
+        <meta property="og:description" content="Capture and inspect inbound webhooks and HTTP calls in real-time. A lightweight, self-hosted HTTP debugging tool." />
+        <meta property="og:type" content="website" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="alternate icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Fira+Code:wght@400;500;600&display=swap" as="style" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Fira+Code:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Fira+Code:wght@400;500;600&display=swap" /></noscript>
         <script>
             window.tailwind = {
                 config: {
@@ -52,6 +58,7 @@
         <script type="module" defer src="/assets/app.js"></script>
     </head>
     <body class="bg-surface-deep text-neutral-100 antialiased">
+        <a href="#main-content" class="skip-link">Skip to main content</a>
         <!--
         =================================================================
         AI / LLM Agent Access
@@ -81,8 +88,8 @@
 
         <div id="app" v-cloak class="relative z-10 flex min-h-screen flex-col">
             <!-- Header -->
-            <header class="mx-auto w-full max-w-[1200px] px-6 pt-10">
-                <div class="glass-panel rounded-2xl p-8">
+            <header class="mx-auto w-full max-w-[1200px] px-4 pt-6 sm:px-6 sm:pt-10">
+                <div class="glass-panel rounded-2xl p-5 sm:p-8">
                     <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                         <div class="max-w-xl space-y-3">
                             <div class="flex items-center gap-3">
@@ -91,15 +98,13 @@
                                         <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"/>
                                     </svg>
                                 </div>
-                                <div>
-                                    <h1 class="text-2xl font-bold tracking-tight text-white">httpcapture</h1>
-                                </div>
+                                <h1 class="text-2xl font-bold tracking-tight text-white">httpcapture</h1>
                             </div>
-                            <p class="text-sm leading-relaxed text-neutral-400 pl-[52px]">
+                            <p class="text-sm leading-relaxed text-neutral-400 pl-0 sm:pl-[52px]">
                                 Capture and inspect inbound webhooks and HTTP calls in real-time.
                                 A lightweight, self-hosted debugging surface for day-to-day development.
                             </p>
-                            <div class="pl-[52px] pt-1">
+                            <div class="pl-0 pt-1 sm:pl-[52px]">
                                 <a href="https://github.com/agarzon/httpcapture" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-neutral-400 transition-all duration-200 hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white">
                                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
                                     <span>Open Source on GitHub</span>
@@ -122,8 +127,8 @@
             </header>
 
             <!-- Main content -->
-            <main class="relative z-10 mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-6 px-6 pb-16 pt-6">
-                <section class="grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+            <main id="main-content" class="relative z-10 mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-4 px-4 pb-12 pt-4 sm:gap-6 sm:px-6 sm:pb-16 sm:pt-6">
+                <section class="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
                     <!-- Request list panel -->
                     <aside class="glass-panel flex flex-col overflow-hidden rounded-2xl">
                         <div class="flex flex-col gap-4 border-b border-white/[0.04] px-6 py-5">
@@ -141,14 +146,14 @@
                                     </svg>
                                     <span>Refresh</span>
                                 </button>
-                                <button type="button" class="btn btn--danger" @click="deleteAll" :disabled="loading || !requests.length">
+                                <button type="button" :class="['btn', confirmingDeleteAll ? 'btn--danger-confirm' : 'btn--danger']" @click="deleteAll" :disabled="loading || !requests.length">
                                     <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
                                         <path d="M10 11v6"></path>
                                         <path d="M14 11v6"></path>
                                     </svg>
-                                    <span>Clear All</span>
+                                    <span aria-live="polite">{{ confirmingDeleteAll ? 'Confirm?' : 'Clear All' }}</span>
                                 </button>
                             </div>
                         </div>
@@ -202,9 +207,14 @@
                                         <li
                                             v-for="item in requests"
                                             :key="item.id"
+                                            role="button"
+                                            tabindex="0"
                                             class="request-item group relative cursor-pointer overflow-hidden rounded-xl border border-white/[0.04] bg-white/[0.02] p-3.5 transition-all duration-200 hover:border-white/[0.08] hover:bg-white/[0.04]"
                                             :class="{ 'request-item--selected': selected && selected.id === item.id }"
+                                            :aria-selected="selected && selected.id === item.id"
                                             @click="select(item.id)"
+                                            @keydown.enter="select(item.id)"
+                                            @keydown.space.prevent="select(item.id)"
                                         >
                                             <div class="flex items-center gap-3">
                                                 <span class="method-badge" :class="methodBadgeClass(item.method)">
@@ -240,7 +250,7 @@
                             </div>
                             <button
                                 type="button"
-                                class="btn btn--danger"
+                                :class="['btn', confirmingDelete === selected?.id ? 'btn--danger-confirm' : 'btn--danger']"
                                 @click="deleteOne"
                                 :disabled="loading || !selected"
                                 v-if="selected"
@@ -251,7 +261,7 @@
                                     <path d="M10 11v6"></path>
                                     <path d="M14 11v6"></path>
                                 </svg>
-                                <span>Delete</span>
+                                <span aria-live="polite">{{ confirmingDelete === selected?.id ? 'Confirm?' : 'Delete' }}</span>
                             </button>
                         </div>
 
@@ -303,16 +313,20 @@
                                         <span>Headers ({{ Object.keys(formattedHeaders).length }})</span>
                                         <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.headers }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div v-show="sections.headers" class="data-container">
-                                        <div v-if="!hasHeaders" class="p-4 text-xs text-neutral-600 italic font-mono">(empty)</div>
-                                        <table v-else class="data-table">
-                                            <tbody>
-                                                <tr v-for="(value, key) in formattedHeaders" :key="key">
-                                                    <td class="data-table__key">{{ key }}</td>
-                                                    <td class="data-table__value" v-html="linkify(String(value))"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.headers }">
+                                        <div class="collapsible-content">
+                                            <div class="data-container">
+                                                <div v-if="!hasHeaders" class="p-4 text-xs text-neutral-600 italic font-mono">(empty)</div>
+                                                <table v-else class="data-table">
+                                                    <tbody>
+                                                        <tr v-for="(value, key) in formattedHeaders" :key="key">
+                                                            <td class="data-table__key">{{ key }}</td>
+                                                            <td class="data-table__value" v-html="linkify(String(value))"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
 
@@ -322,16 +336,20 @@
                                         <span>Query Parameters ({{ Object.keys(formattedQuery).length }})</span>
                                         <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.query }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div v-show="sections.query" class="data-container">
-                                        <div v-if="!hasQuery" class="p-4 text-xs text-neutral-600 italic font-mono">(no query parameters)</div>
-                                        <table v-else class="data-table">
-                                            <tbody>
-                                                <tr v-for="(value, key) in formattedQuery" :key="key">
-                                                    <td class="data-table__key">{{ key }}</td>
-                                                    <td class="data-table__value" v-html="linkify(String(value))"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.query }">
+                                        <div class="collapsible-content">
+                                            <div class="data-container">
+                                                <div v-if="!hasQuery" class="p-4 text-xs text-neutral-600 italic font-mono">(no query parameters)</div>
+                                                <table v-else class="data-table">
+                                                    <tbody>
+                                                        <tr v-for="(value, key) in formattedQuery" :key="key">
+                                                            <td class="data-table__key">{{ key }}</td>
+                                                            <td class="data-table__value" v-html="linkify(String(value))"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
 
@@ -341,15 +359,19 @@
                                         <span>Form Data ({{ Object.keys(formattedFormData).length }})</span>
                                         <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.formData }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div v-show="sections.formData" class="data-container">
-                                        <table class="data-table">
-                                            <tbody>
-                                                <tr v-for="(value, key) in formattedFormData" :key="key">
-                                                    <td class="data-table__key">{{ key }}</td>
-                                                    <td class="data-table__value" v-html="linkify(String(value))"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.formData }">
+                                        <div class="collapsible-content">
+                                            <div class="data-container">
+                                                <table class="data-table">
+                                                    <tbody>
+                                                        <tr v-for="(value, key) in formattedFormData" :key="key">
+                                                            <td class="data-table__key">{{ key }}</td>
+                                                            <td class="data-table__value" v-html="linkify(String(value))"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
 
@@ -359,16 +381,20 @@
                                         <span>Files ({{ Object.keys(formattedFiles).length }})</span>
                                         <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.files }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div v-show="sections.files" class="data-container">
-                                        <div class="divide-y divide-white/[0.03]">
-                                            <div v-for="(file, key) in formattedFiles" :key="key" class="file-item">
-                                                <div class="flex items-center gap-3">
-                                                    <svg class="h-4 w-4 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
-                                                    <span class="font-mono text-xs text-neutral-300">{{ file.name || key }}</span>
-                                                </div>
-                                                <div class="flex items-center gap-4 text-[0.6rem] uppercase tracking-wider font-semibold font-mono text-neutral-500">
-                                                    <span v-if="file.type">{{ file.type }}</span>
-                                                    <span v-if="file.size">{{ (file.size / 1024).toFixed(1) }} KB</span>
+                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.files }">
+                                        <div class="collapsible-content">
+                                            <div class="data-container">
+                                                <div class="divide-y divide-white/[0.03]">
+                                                    <div v-for="(file, key) in formattedFiles" :key="key" class="file-item">
+                                                        <div class="flex items-center gap-3">
+                                                            <svg class="h-4 w-4 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                                                            <span class="font-mono text-xs text-neutral-300">{{ file.name || key }}</span>
+                                                        </div>
+                                                        <div class="flex items-center gap-4 text-[0.6rem] uppercase tracking-wider font-semibold font-mono text-neutral-500">
+                                                            <span v-if="file.type">{{ file.type }}</span>
+                                                            <span v-if="file.size">{{ (file.size / 1024).toFixed(1) }} KB</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -381,23 +407,27 @@
                                         <span>Body</span>
                                         <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.body }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div v-show="sections.body" class="code-viewer">
-                                        <div class="code-viewer__toolbar">
-                                            <span class="code-viewer__lang">{{ formattedBody.language }}</span>
-                                            <button @click="copyToClipboard(formattedBody.raw, $event)" class="copy-btn" title="Copy to clipboard">
-                                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                            </button>
-                                        </div>
-                                        <div class="code-viewer__body">
-                                            <div v-if="formattedBody.isEmpty" class="p-4 text-xs text-neutral-600 italic font-mono">(empty)</div>
-                                            <table v-else class="w-full border-collapse">
-                                                <tbody>
-                                                    <tr v-for="(line, index) in formattedBody.lines" :key="index" class="code-viewer__line">
-                                                        <td class="code-viewer__gutter">{{ index + 1 }}</td>
-                                                        <td class="code-viewer__content" v-html="line || ' '"></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.body }">
+                                        <div class="collapsible-content">
+                                            <div class="code-viewer">
+                                                <div class="code-viewer__toolbar">
+                                                    <span class="code-viewer__lang">{{ formattedBody.language }}</span>
+                                                    <button @click="copyToClipboard(formattedBody.raw, $event)" class="copy-btn" title="Copy to clipboard" aria-label="Copy to clipboard">
+                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                    </button>
+                                                </div>
+                                                <div class="code-viewer__body">
+                                                    <div v-if="formattedBody.isEmpty" class="p-4 text-xs text-neutral-600 italic font-mono">(empty)</div>
+                                                    <table v-else class="w-full border-collapse">
+                                                        <tbody>
+                                                            <tr v-for="(line, index) in formattedBody.lines" :key="index" class="code-viewer__line">
+                                                                <td class="code-viewer__gutter">{{ index + 1 }}</td>
+                                                                <td class="code-viewer__content" v-html="line || ' '"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </section>
@@ -411,18 +441,19 @@
             <footer class="relative z-10 pb-8">
                 <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 text-xs text-neutral-600">
                     <span>&copy; {{ currentYear }} <a href="https://github.com/agarzon/httpcapture" class="hover:text-neutral-400 transition-colors">httpcapture</a></span>
-                    <span class="hidden items-center gap-2 sm:inline-flex">
+                    <span class="footer-status inline-flex items-center gap-2">
                         <div class="live-pulse" style="width:6px;height:6px;"></div>
-                        <span>Live webhook observer</span>
+                        <span class="hidden sm:inline">Live webhook observer</span>
+                        <span class="sm:hidden">Live</span>
                     </span>
                 </div>
             </footer>
 
             <!-- Toast notification -->
-            <div v-if="error" class="toast toast--error">
+            <div v-if="error" class="toast toast--error" role="alert" aria-live="assertive">
                 <p>{{ error }}</p>
             </div>
-            <div v-if="copySuccess" class="toast toast--success">
+            <div v-if="copySuccess" class="toast toast--success" role="status" aria-live="polite">
                 <p>Copied to clipboard</p>
             </div>
         </div>

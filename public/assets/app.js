@@ -8,6 +8,10 @@ createApp({
         const loading = ref(false);
         const error = ref('');
         const copySuccess = ref(false);
+        const confirmingDelete = ref(null);
+        const confirmingDeleteAll = ref(false);
+        let confirmDeleteTimeout = null;
+        let confirmDeleteAllTimeout = null;
         const page = ref(1);
         const perPage = ref(10);
         const total = ref(0);
@@ -113,10 +117,17 @@ createApp({
                 return;
             }
 
-            const confirmDelete = window.confirm('Delete this request permanently?');
-            if (!confirmDelete) {
+            if (confirmingDelete.value !== selected.value.id) {
+                confirmingDelete.value = selected.value.id;
+                window.clearTimeout(confirmDeleteTimeout);
+                confirmDeleteTimeout = window.setTimeout(() => {
+                    confirmingDelete.value = null;
+                }, 4000);
                 return;
             }
+
+            confirmingDelete.value = null;
+            window.clearTimeout(confirmDeleteTimeout);
 
             loading.value = true;
             try {
@@ -134,10 +145,17 @@ createApp({
                 return;
             }
 
-            const confirmDelete = window.confirm('Delete all captured requests? This cannot be undone.');
-            if (!confirmDelete) {
+            if (!confirmingDeleteAll.value) {
+                confirmingDeleteAll.value = true;
+                window.clearTimeout(confirmDeleteAllTimeout);
+                confirmDeleteAllTimeout = window.setTimeout(() => {
+                    confirmingDeleteAll.value = false;
+                }, 4000);
                 return;
             }
+
+            confirmingDeleteAll.value = false;
+            window.clearTimeout(confirmDeleteAllTimeout);
 
             loading.value = true;
             try {
@@ -360,6 +378,8 @@ createApp({
             loading,
             error,
             copySuccess,
+            confirmingDelete,
+            confirmingDeleteAll,
             page,
             perPage,
             total,
