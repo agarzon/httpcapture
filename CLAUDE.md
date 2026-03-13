@@ -33,11 +33,12 @@ httpcapture is a zero-dependency PHP 8.4 HTTP capture tool with a Vue 3 SPA fron
 
 **Frontend (`public/`):**
 - `index.html` — Vue 3 SPA loaded via CDN (Vue, Tailwind, highlight.js)
-- `assets/app.js` — Vue composition API app, polls `/api/requests` every 5s
+- `assets/app.js` — Vue composition API app, adaptive polling via `/api/requests/poll` (1s focused / 10s background)
 - `assets/app.css` — Custom styles with glassmorphism, animations, hljs theme
 
 **API routes** (defined in `Application.php`):
 - `GET /api/requests` — Paginated list (`page`, `per_page` params)
+- `GET /api/requests/poll` — Lightweight change-detection (`latest_id`, `total`)
 - `GET /api/requests/{id}` — Single capture
 - `DELETE /api/requests/{id}` — Delete one
 - `DELETE /api/requests` — Delete all
