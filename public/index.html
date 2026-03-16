@@ -26,20 +26,11 @@
                             },
                             colors: {
                                 brand: {
-                                    50: '#f0f9ff',
-                                    100: '#e0f2fe',
-                                    200: '#bae6fd',
-                                    300: '#7dd3fc',
                                     400: '#38bdf8',
                                     500: '#0ea5e9',
-                                    600: '#0284c7',
-                                    700: '#0369a1',
                                 },
                                 surface: {
                                     deep: '#08090d',
-                                    base: '#10121b',
-                                    raised: '#161927',
-                                    overlay: '#1c1f30',
                                 },
                             },
                         },
@@ -52,8 +43,8 @@
         <style>
             #app[v-cloak] { display: none; }
         </style>
-        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" crossorigin="anonymous"></script>
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js" integrity="sha384-RbRhXcXx5VHUdUaC5R0oV+XBXA5GhkaVCUzK8xN19K3FmtWSHyGVgulK92XnhBsI" crossorigin="anonymous"></script>
         <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
         <script type="module" defer src="/assets/app.js"></script>
     </head>
@@ -83,8 +74,6 @@
             <div class="bg-orb bg-orb--cool"></div>
             <div class="bg-orb bg-orb--accent"></div>
         </div>
-        <div class="bg-noise" aria-hidden="true"></div>
-        <div class="bg-grid" aria-hidden="true"></div>
 
         <div id="app" v-cloak class="relative z-10 flex min-h-screen flex-col">
             <!-- Header -->
@@ -94,7 +83,7 @@
                         <div class="max-w-xl space-y-3">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/15 border border-brand-500/20">
-                                    <svg class="h-5 w-5 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg class="h-5 w-5 text-brand-400" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"/>
                                     </svg>
                                 </div>
@@ -105,10 +94,10 @@
                                 A lightweight, self-hosted debugging surface for day-to-day development.
                             </p>
                             <div class="pl-0 pt-1 sm:pl-[52px]">
-                                <a href="https://github.com/agarzon/httpcapture" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-neutral-400 transition-all duration-200 hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white">
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                                <a href="https://github.com/agarzon/httpcapture" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-neutral-400 transition-colors duration-200 hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white">
+                                    <svg class="h-4 w-4" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
                                     <span>Open Source on GitHub</span>
-                                    <svg class="h-3 w-3 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    <svg class="h-3 w-3 opacity-50" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                                 </a>
                             </div>
                         </div>
@@ -117,9 +106,13 @@
                                 <span class="capture-counter__number">{{ total }}</span>
                                 <span class="capture-counter__label">captured</span>
                             </div>
-                            <div class="flex items-center gap-2 text-xs text-neutral-500">
-                                <div class="live-pulse"></div>
-                                <span>Auto-refreshing every 5s</span>
+                            <div v-if="offline" class="offline-banner" role="status" aria-live="polite">
+                                <div class="offline-banner__dot" aria-hidden="true"></div>
+                                <span>Connection lost</span>
+                            </div>
+                            <div v-else class="flex items-center gap-2 text-xs text-neutral-500">
+                                <div class="live-pulse" aria-hidden="true"></div>
+                                <span>Live updating</span>
                             </div>
                         </div>
                     </div>
@@ -130,15 +123,15 @@
             <main id="main-content" class="relative z-10 mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-4 px-4 pb-12 pt-4 sm:gap-6 sm:px-6 sm:pb-16 sm:pt-6">
                 <section class="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
                     <!-- Request list panel -->
-                    <aside class="glass-panel flex flex-col overflow-hidden rounded-2xl">
+                    <aside class="glass-panel request-list-panel flex flex-col overflow-hidden rounded-2xl">
                         <div class="flex flex-col gap-4 border-b border-white/[0.04] px-6 py-5">
                             <div>
                                 <h2 class="text-base font-bold text-white">Captured Requests</h2>
-                                <p class="text-xs text-neutral-500 mt-0.5">Monitoring incoming payloads</p>
+                                <p class="text-xs text-neutral-500 mt-0.5">Listening for incoming requests</p>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button type="button" class="btn btn--brand" @click="refresh" :disabled="loading">
-                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg class="h-3.5 w-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="23 4 23 10 17 10"></polyline>
                                         <polyline points="1 20 1 14 7 14"></polyline>
                                         <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
@@ -147,13 +140,13 @@
                                     <span>Refresh</span>
                                 </button>
                                 <button type="button" :class="['btn', confirmingDeleteAll ? 'btn--danger-confirm' : 'btn--danger']" @click="deleteAll" :disabled="loading || !requests.length">
-                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg class="h-3.5 w-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
                                         <path d="M10 11v6"></path>
                                         <path d="M14 11v6"></path>
                                     </svg>
-                                    <span aria-live="polite">{{ confirmingDeleteAll ? 'Confirm?' : 'Clear All' }}</span>
+                                    <span aria-live="polite">{{ confirmingDeleteAll ? 'Delete all?' : 'Clear all' }}</span>
                                 </button>
                             </div>
                         </div>
@@ -162,13 +155,13 @@
                         <div class="border-b border-white/[0.04] px-6 py-2.5" v-if="lastPage > 1">
                             <div class="flex items-center justify-between gap-2">
                                 <button type="button" class="pagination-btn" :disabled="!canGoPrevious" @click="goToPreviousPage">
-                                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                    <svg class="h-3 w-3" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                                     <span>Prev</span>
                                 </button>
-                                <span class="text-xs font-mono font-medium text-neutral-400">{{ page }} / {{ lastPage }}</span>
+                                <span class="text-xs font-mono font-medium text-neutral-400" aria-live="polite" aria-atomic="true">Page {{ page }} of {{ lastPage }}</span>
                                 <button type="button" class="pagination-btn" :disabled="!canGoNext" @click="goToNextPage">
                                     <span>Next</span>
-                                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                    <svg class="h-3 w-3" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </button>
                             </div>
                         </div>
@@ -178,7 +171,8 @@
                             <div class="flex h-full flex-col">
                                 <div class="scrollable-panel">
                                     <!-- Loading skeleton -->
-                                    <div v-if="loading && !requests.length" class="flex flex-col gap-3 p-4">
+                                    <div v-if="loading && !requests.length" class="flex flex-col gap-3 p-4" role="status" aria-label="Loading requests">
+                                        <span class="sr-only">Loading captured requests…</span>
                                         <div v-for="n in 5" :key="n" class="rounded-xl p-4">
                                             <div class="flex items-start gap-3">
                                                 <div class="skeleton h-6 w-16"></div>
@@ -192,7 +186,7 @@
 
                                     <!-- Empty state -->
                                     <div v-else-if="!requests.length && !loading" class="empty-state">
-                                        <svg class="empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="empty-state__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
                                             <circle cx="12" cy="12" r="10"></circle>
                                             <path d="M12 6v6l4 2"></path>
                                         </svg>
@@ -203,13 +197,13 @@
                                     </div>
 
                                     <!-- Request items -->
-                                    <ul v-else class="flex flex-col gap-2 p-3">
+                                    <ul v-else class="flex flex-col gap-2 p-3" role="listbox" aria-label="Captured requests" @keydown="onListKeydown">
                                         <li
                                             v-for="item in requests"
                                             :key="item.id"
-                                            role="button"
-                                            tabindex="0"
-                                            class="request-item group relative cursor-pointer overflow-hidden rounded-xl border border-white/[0.04] bg-white/[0.02] p-3.5 transition-all duration-200 hover:border-white/[0.08] hover:bg-white/[0.04]"
+                                            role="option"
+                                            :tabindex="selected && selected.id === item.id ? 0 : -1"
+                                            class="request-item group relative cursor-pointer overflow-hidden rounded-xl border border-white/[0.04] bg-white/[0.02] p-3.5 transition-colors duration-200 hover:border-white/[0.08] hover:bg-white/[0.04]"
                                             :class="{ 'request-item--selected': selected && selected.id === item.id }"
                                             :aria-selected="selected && selected.id === item.id"
                                             @click="select(item.id)"
@@ -229,7 +223,7 @@
                                                     </div>
                                                     <p class="text-[0.7rem] text-neutral-500 mt-0.5 font-mono" :title="formatDate(item.created_at)">{{ relativeTime(item.created_at) }}</p>
                                                 </div>
-                                                <svg class="h-3.5 w-3.5 text-neutral-600 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <svg class="h-3.5 w-3.5 text-neutral-600 transition-[transform,color] duration-200 group-hover:translate-x-0.5 group-hover:text-neutral-400" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <polyline points="9 18 15 12 9 6"></polyline>
                                                 </svg>
                                             </div>
@@ -255,20 +249,20 @@
                                 :disabled="loading || !selected"
                                 v-if="selected"
                             >
-                                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="h-3.5 w-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="3 6 5 6 21 6"></polyline>
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
                                     <path d="M10 11v6"></path>
                                     <path d="M14 11v6"></path>
                                 </svg>
-                                <span aria-live="polite">{{ confirmingDelete === selected?.id ? 'Confirm?' : 'Delete' }}</span>
+                                <span aria-live="polite">{{ confirmingDelete === selected?.id ? 'Delete?' : 'Delete' }}</span>
                             </button>
                         </div>
 
                         <div class="scrollable-panel">
                             <!-- Empty detail state -->
-                            <div v-if="!selected && !loading" class="empty-state" style="padding: 64px 24px;">
-                                <svg class="empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                            <div v-if="!selected && !loading" class="empty-state empty-state--spacious">
+                                <svg class="empty-state__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
                                     <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -298,26 +292,27 @@
                                         </div>
                                         <div class="overview-item">
                                             <div class="overview-label">Captured</div>
-                                            <div class="overview-value" style="font-size: 0.78rem; color: var(--text-secondary);">{{ formatDate(selected.created_at) }}</div>
+                                            <div class="overview-value overview-value--subtle">{{ formatDate(selected.created_at) }}</div>
                                         </div>
                                         <div class="overview-item">
                                             <div class="overview-label">Client IP</div>
-                                            <div class="overview-value" style="font-size: 0.78rem; color: var(--text-secondary);">{{ selected.client_ip }}</div>
+                                            <div class="overview-value overview-value--subtle">{{ selected.client_ip }}</div>
                                         </div>
                                     </div>
                                 </section>
 
                                 <!-- Headers -->
                                 <section class="space-y-3">
-                                    <button @click="toggleSection('headers')" class="section-toggle">
+                                    <button @click="toggleSection('headers')" class="section-toggle" :aria-expanded="sections.headers" aria-controls="panel-headers">
                                         <span>Headers ({{ Object.keys(formattedHeaders).length }})</span>
-                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.headers }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.headers }" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.headers }">
+                                    <div id="panel-headers" class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.headers }">
                                         <div class="collapsible-content">
                                             <div class="data-container">
-                                                <div v-if="!hasHeaders" class="p-4 text-xs text-neutral-600 italic font-mono">(empty)</div>
+                                                <div v-if="!hasHeaders" class="p-4 text-xs text-neutral-600 italic font-mono">(no headers)</div>
                                                 <table v-else class="data-table">
+                                                    <thead class="sr-only"><tr><th scope="col">Name</th><th scope="col">Value</th></tr></thead>
                                                     <tbody>
                                                         <tr v-for="(value, key) in formattedHeaders" :key="key">
                                                             <td class="data-table__key">{{ key }}</td>
@@ -332,15 +327,16 @@
 
                                 <!-- Query Parameters -->
                                 <section class="space-y-3">
-                                    <button @click="toggleSection('query')" class="section-toggle">
+                                    <button @click="toggleSection('query')" class="section-toggle" :aria-expanded="sections.query" aria-controls="panel-query">
                                         <span>Query Parameters ({{ Object.keys(formattedQuery).length }})</span>
-                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.query }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.query }" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.query }">
+                                    <div id="panel-query" class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.query }">
                                         <div class="collapsible-content">
                                             <div class="data-container">
-                                                <div v-if="!hasQuery" class="p-4 text-xs text-neutral-600 italic font-mono">(no query parameters)</div>
+                                                <div v-if="!hasQuery" class="p-4 text-xs text-neutral-600 italic font-mono">(no query params)</div>
                                                 <table v-else class="data-table">
+                                                    <thead class="sr-only"><tr><th scope="col">Parameter</th><th scope="col">Value</th></tr></thead>
                                                     <tbody>
                                                         <tr v-for="(value, key) in formattedQuery" :key="key">
                                                             <td class="data-table__key">{{ key }}</td>
@@ -355,14 +351,15 @@
 
                                 <!-- Form Data -->
                                 <section class="space-y-3" v-if="hasFormData">
-                                    <button @click="toggleSection('formData')" class="section-toggle">
+                                    <button @click="toggleSection('formData')" class="section-toggle" :aria-expanded="sections.formData" aria-controls="panel-formData">
                                         <span>Form Data ({{ Object.keys(formattedFormData).length }})</span>
-                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.formData }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.formData }" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.formData }">
+                                    <div id="panel-formData" class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.formData }">
                                         <div class="collapsible-content">
                                             <div class="data-container">
                                                 <table class="data-table">
+                                                    <thead class="sr-only"><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
                                                     <tbody>
                                                         <tr v-for="(value, key) in formattedFormData" :key="key">
                                                             <td class="data-table__key">{{ key }}</td>
@@ -377,17 +374,17 @@
 
                                 <!-- Files -->
                                 <section class="space-y-3" v-if="hasFiles">
-                                    <button @click="toggleSection('files')" class="section-toggle">
+                                    <button @click="toggleSection('files')" class="section-toggle" :aria-expanded="sections.files" aria-controls="panel-files">
                                         <span>Files ({{ Object.keys(formattedFiles).length }})</span>
-                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.files }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.files }" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.files }">
+                                    <div id="panel-files" class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.files }">
                                         <div class="collapsible-content">
                                             <div class="data-container">
                                                 <div class="divide-y divide-white/[0.03]">
                                                     <div v-for="(file, key) in formattedFiles" :key="key" class="file-item">
                                                         <div class="flex items-center gap-3">
-                                                            <svg class="h-4 w-4 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                                                            <svg class="h-4 w-4 text-brand-400" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                                                             <span class="font-mono text-xs text-neutral-300">{{ file.name || key }}</span>
                                                         </div>
                                                         <div class="flex items-center gap-4 text-[0.6rem] uppercase tracking-wider font-semibold font-mono text-neutral-500">
@@ -403,22 +400,22 @@
 
                                 <!-- Body -->
                                 <section class="space-y-3">
-                                    <button @click="toggleSection('body')" class="section-toggle">
+                                    <button @click="toggleSection('body')" class="section-toggle" :aria-expanded="sections.body" aria-controls="panel-body">
                                         <span>Body</span>
-                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.body }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <svg class="section-toggle__icon" :class="{ 'section-toggle__icon--collapsed': !sections.body }" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </button>
-                                    <div class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.body }">
+                                    <div id="panel-body" class="collapsible-wrapper" :class="{ 'collapsible-wrapper--open': sections.body }">
                                         <div class="collapsible-content">
                                             <div class="code-viewer">
                                                 <div class="code-viewer__toolbar">
                                                     <span class="code-viewer__lang">{{ formattedBody.language }}</span>
                                                     <button @click="copyToClipboard(formattedBody.raw, $event)" class="copy-btn" title="Copy to clipboard" aria-label="Copy to clipboard">
-                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                        <svg class="h-4 w-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                                     </button>
                                                 </div>
                                                 <div class="code-viewer__body">
-                                                    <div v-if="formattedBody.isEmpty" class="p-4 text-xs text-neutral-600 italic font-mono">(empty)</div>
-                                                    <table v-else class="w-full border-collapse">
+                                                    <div v-if="formattedBody.isEmpty" class="p-4 text-xs text-neutral-600 italic font-mono">(no body)</div>
+                                                    <table v-else class="w-full border-collapse" role="presentation">
                                                         <tbody>
                                                             <tr v-for="(line, index) in formattedBody.lines" :key="index" class="code-viewer__line">
                                                                 <td class="code-viewer__gutter">{{ index + 1 }}</td>
@@ -441,11 +438,7 @@
             <footer class="relative z-10 pb-8">
                 <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 text-xs text-neutral-600">
                     <span>&copy; {{ currentYear }} <a href="https://github.com/agarzon/httpcapture" class="hover:text-neutral-400 transition-colors">httpcapture</a></span>
-                    <span class="footer-status inline-flex items-center gap-2">
-                        <div class="live-pulse" style="width:6px;height:6px;"></div>
-                        <span class="hidden sm:inline">Live webhook observer</span>
-                        <span class="sm:hidden">Live</span>
-                    </span>
+                    <span class="text-neutral-600">Open source</span>
                 </div>
             </footer>
 

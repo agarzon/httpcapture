@@ -18,6 +18,8 @@ createApp({
         const total = ref(0);
         const lastPage = ref(1);
         const currentYear = new Date().getFullYear();
+        const offline = ref(false);
+        let lastPollError = '';
         let pollIntervalId = null;
         let knownLatestId = null;
         let knownTotal = 0;
@@ -47,7 +49,7 @@ createApp({
                     detail = response.statusText;
                 }
 
-                throw new Error(detail || 'Request failed');
+                throw new Error(detail || 'Could not reach the server');
             }
 
             return response.json();
@@ -226,7 +228,7 @@ createApp({
                     copySuccess.value = false;
                 }, 2000);
             } catch (err) {
-                setError('Failed to copy to clipboard');
+                setError('Couldn\u2019t copy \u2014 try selecting the text manually');
             }
         };
 
@@ -238,6 +240,23 @@ createApp({
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        };
+
+        const ALLOWED_TAGS = new Set(['a', 'span', '/a', '/span']);
+        const ALLOWED_ATTRS = /^(class|href|target|rel)$/i;
+        const sanitizeHtml = (html) => {
+            return html.replace(/<\/?[a-z][^>]*>/gi, (tag) => {
+                const nameMatch = tag.match(/^<\/?([a-z]+)/i);
+                if (!nameMatch) return escapeHtml(tag);
+                const name = (tag.startsWith('</') ? '/' : '') + nameMatch[1].toLowerCase();
+                if (!ALLOWED_TAGS.has(name)) return escapeHtml(tag);
+                if (tag.startsWith('</')) return tag;
+                const stripped = tag.replace(/\s+[a-z-]+=("[^"]*"|'[^']*')/gi, (attr) => {
+                    const attrName = attr.trim().split('=')[0];
+                    return ALLOWED_ATTRS.test(attrName) ? attr : '';
+                });
+                return stripped;
+            });
         };
 
         const linkify = (text) => {
@@ -317,11 +336,13 @@ createApp({
             if (isJson && window.hljs) {
                 content = window.hljs.highlight(raw, { language: 'json' }).value;
                 content = content.replace(/<span class="hljs-string">&quot;(.*?)&quot;<\/span>/g, (match, inner) => {
-                    const linked = inner.replace(/(https?:\/\/[^\s"<>]+)/g, (url) => {
-                        return `<a href="${url}" target="_blank" rel="noopener" class="data-link">${url}</a>`;
+                    const linked = inner.replace(/(https?:\/\/[^\s"<>&]+)/g, (url) => {
+                        const safeUrl = escapeHtml(url);
+                        return `<a href="${safeUrl}" target="_blank" rel="noopener" class="data-link">${safeUrl}</a>`;
                     });
                     return `<span class="hljs-string">&quot;${linked}&quot;</span>`;
                 });
+                content = sanitizeHtml(content);
             } else {
                 content = linkify(raw);
             }
@@ -360,9 +381,37 @@ createApp({
         const goToPreviousPage = () => changePage(page.value - 1);
         const goToNextPage = () => changePage(page.value + 1);
 
+        const onListKeydown = (event) => {
+            if (!requests.value.length) return;
+            const currentIndex = selected.value
+                ? requests.value.findIndex((r) => r.id === selected.value.id)
+                : -1;
+
+            let nextIndex = -1;
+            if (event.key === 'ArrowDown') {
+                nextIndex = Math.min(currentIndex + 1, requests.value.length - 1);
+            } else if (event.key === 'ArrowUp') {
+                nextIndex = Math.max(currentIndex - 1, 0);
+            } else if (event.key === 'Home') {
+                nextIndex = 0;
+            } else if (event.key === 'End') {
+                nextIndex = requests.value.length - 1;
+            }
+
+            if (nextIndex >= 0 && nextIndex !== currentIndex) {
+                event.preventDefault();
+                select(requests.value[nextIndex].id);
+                const listEl = event.currentTarget;
+                const items = listEl.querySelectorAll('[role="option"]');
+                if (items[nextIndex]) items[nextIndex].focus();
+            }
+        };
+
         const checkForUpdates = async () => {
             try {
                 const payload = await requestJson('/api/requests/poll');
+                offline.value = false;
+                lastPollError = '';
                 const newLatestId = payload.latest_id;
                 const newTotal = payload.total;
 
@@ -372,7 +421,11 @@ createApp({
                     await fetchRequests();
                 }
             } catch (err) {
-                setError(err.message);
+                offline.value = true;
+                if (err.message !== lastPollError) {
+                    lastPollError = err.message;
+                    setError(err.message);
+                }
             }
         };
 
@@ -418,6 +471,7 @@ createApp({
             selected,
             loading,
             error,
+            offline,
             copySuccess,
             confirmingDelete,
             confirmingDeleteAll,
@@ -451,6 +505,7 @@ createApp({
             linkify,
             relativeTime,
             contentTypeBadge,
+            onListKeydown,
         };
     },
 }).mount('#app');

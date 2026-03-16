@@ -4,7 +4,6 @@
     /* Backgrounds */
     --bg-deep: #08090d;
     --bg-surface: rgba(16, 18, 27, 0.65);
-    --bg-elevated: rgba(22, 25, 38, 0.7);
     --bg-code: rgba(8, 9, 13, 0.8);
     --bg-code-data: rgba(8, 9, 13, 0.6);
     --bg-hover: rgba(255, 255, 255, 0.02);
@@ -16,22 +15,20 @@
     /* Borders */
     --border-subtle: rgba(255, 255, 255, 0.06);
     --border-medium: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.15);
     --border-faint: rgba(255, 255, 255, 0.04);
     --border-divider: rgba(255, 255, 255, 0.03);
 
     /* Brand */
     --brand-core: #38bdf8;
-    --brand-glow: rgba(56, 189, 248, 0.15);
     --brand-bg: rgba(56, 189, 248, 0.08);
     --brand-bg-hover: rgba(56, 189, 248, 0.15);
     --brand-border: rgba(56, 189, 248, 0.3);
     --brand-border-hover: rgba(56, 189, 248, 0.5);
     --brand-border-active: rgba(56, 189, 248, 0.35);
     --brand-shadow: rgba(56, 189, 248, 0.1);
-    --brand-shadow-subtle: rgba(56, 189, 248, 0.08);
 
     /* Semantic: success */
-    --success-text: #6ee7b7;
     --success-core: #34d399;
     --success-bg: rgba(52, 211, 153, 0.12);
     --success-border: rgba(52, 211, 153, 0.25);
@@ -46,6 +43,8 @@
     --danger-border: rgba(248, 113, 113, 0.25);
     --danger-border-hover: rgba(248, 113, 113, 0.4);
     --danger-shadow: rgba(248, 113, 113, 0.1);
+    --danger-bg-confirm: rgba(248, 113, 113, 0.18);
+    --danger-border-confirm: rgba(248, 113, 113, 0.55);
 
     /* Text */
     --text-primary: #f0f0f5;
@@ -57,27 +56,22 @@
     --method-get: #7dd3fc;
     --method-get-bg: rgba(56, 189, 248, 0.1);
     --method-get-border: rgba(56, 189, 248, 0.2);
-    --method-get-glow: rgba(56, 189, 248, 0.05);
 
     --method-post: #86efac;
     --method-post-bg: rgba(52, 211, 153, 0.1);
     --method-post-border: rgba(52, 211, 153, 0.2);
-    --method-post-glow: rgba(52, 211, 153, 0.05);
 
     --method-delete: #fca5a5;
     --method-delete-bg: rgba(248, 113, 113, 0.1);
     --method-delete-border: rgba(248, 113, 113, 0.2);
-    --method-delete-glow: rgba(248, 113, 113, 0.05);
 
     --method-put: #fcd34d;
     --method-put-bg: rgba(251, 191, 36, 0.1);
     --method-put-border: rgba(251, 191, 36, 0.2);
-    --method-put-glow: rgba(251, 191, 36, 0.05);
 
     --method-patch: #d8b4fe;
     --method-patch-bg: rgba(192, 132, 252, 0.1);
     --method-patch-border: rgba(192, 132, 252, 0.2);
-    --method-patch-glow: rgba(192, 132, 252, 0.05);
 
     --method-head: #a5f3fc;
     --method-head-bg: rgba(103, 232, 249, 0.1);
@@ -151,7 +145,7 @@ body {
 .copy-btn:focus-visible {
     outline: 2px solid var(--brand-core);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(251, 146, 60, 0.15);
+    box-shadow: 0 0 0 4px var(--brand-shadow);
 }
 
 .section-toggle:focus-visible {
@@ -162,7 +156,7 @@ body {
 .request-item:focus-visible {
     outline: 2px solid var(--brand-core);
     outline-offset: -2px;
-    border-color: rgba(251, 146, 60, 0.35);
+    border-color: var(--brand-border-active);
 }
 
 /* ── Atmospheric background ─────────────────────────────── */
@@ -181,6 +175,7 @@ body {
     filter: blur(100px);
     opacity: 0.35;
     animation: orbFloat 20s ease-in-out infinite;
+    will-change: transform;
 }
 
 .bg-orb--warm {
@@ -217,29 +212,6 @@ body {
     75% { transform: translate(40px, 30px) scale(1.03); }
 }
 
-/* Noise texture overlay */
-.bg-noise {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 256px;
-}
-
-/* Dot grid pattern */
-.bg-grid {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.3;
-    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0);
-    background-size: 32px 32px;
-}
-
 /* ── Glassmorphism panels ───────────────────────────────── */
 
 .glass-panel {
@@ -250,13 +222,7 @@ body {
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.02) inset,
         var(--shadow-panel);
-}
-
-.glass-panel-inner {
-    background: var(--bg-elevated);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-subtle);
+    contain: layout style;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────── */
@@ -345,58 +311,48 @@ body {
     }
 }
 
-/* ── Selected item glow ─────────────────────────────────── */
+/* ── Selected item ──────────────────────────────────────── */
 
 .request-item.request-item--selected {
     background: var(--brand-bg);
     border-color: var(--brand-border-active);
-    box-shadow:
-        0 0 20px var(--brand-shadow-subtle),
-        0 0 0 1px var(--brand-glow) inset;
 }
 
-/* ── Method badge glow ──────────────────────────────────── */
+/* ── Method badges ──────────────────────────────────────── */
 
 .method-badge {
-    position: relative;
     font-size: 0.65rem;
     letter-spacing: 0.18em;
     font-weight: 700;
     text-transform: uppercase;
     padding: 4px 12px;
     border-radius: 6px;
-    transition: all 0.2s ease;
 }
 
 .method-badge--get {
     color: var(--method-get);
     background: var(--method-get-bg);
     border: 1px solid var(--method-get-border);
-    box-shadow: 0 0 12px var(--method-get-glow);
 }
 .method-badge--post {
     color: var(--method-post);
     background: var(--method-post-bg);
     border: 1px solid var(--method-post-border);
-    box-shadow: 0 0 12px var(--method-post-glow);
 }
 .method-badge--delete {
     color: var(--method-delete);
     background: var(--method-delete-bg);
     border: 1px solid var(--method-delete-border);
-    box-shadow: 0 0 12px var(--method-delete-glow);
 }
 .method-badge--put {
     color: var(--method-put);
     background: var(--method-put-bg);
     border: 1px solid var(--method-put-border);
-    box-shadow: 0 0 12px var(--method-put-glow);
 }
 .method-badge--patch {
     color: var(--method-patch);
     background: var(--method-patch-bg);
     border: 1px solid var(--method-patch-border);
-    box-shadow: 0 0 12px var(--method-patch-glow);
 }
 .method-badge--head {
     color: var(--method-head);
@@ -429,14 +385,15 @@ body {
     background: var(--bg-interactive);
     color: var(--text-primary);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn:hover {
     background: var(--bg-interactive-hover);
-    border-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--border-strong);
     transform: translateY(-1px);
     box-shadow: var(--shadow-btn-hover);
 }
@@ -466,21 +423,21 @@ body {
 
 .btn--danger-confirm {
     border-color: var(--danger-border-hover);
-    color: #fff;
-    background: rgba(248, 113, 113, 0.18);
-    box-shadow: 0 0 20px var(--danger-shadow), 0 0 0 1px rgba(248, 113, 113, 0.15) inset;
+    color: var(--text-primary);
+    background: var(--danger-bg-confirm);
+    box-shadow: 0 0 20px var(--danger-shadow), 0 0 0 1px var(--danger-border) inset;
     animation: dangerPulse 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .btn--danger-confirm:hover:not(:disabled) {
-    background: rgba(248, 113, 113, 0.25);
-    border-color: rgba(248, 113, 113, 0.55);
+    background: var(--danger-bg-hover);
+    border-color: var(--danger-border-confirm);
     box-shadow: 0 4px 24px var(--danger-shadow);
 }
 
 @keyframes dangerPulse {
-    0%, 100% { box-shadow: 0 0 20px var(--danger-shadow), 0 0 0 1px rgba(248, 113, 113, 0.15) inset; }
-    50% { box-shadow: 0 0 28px rgba(248, 113, 113, 0.18), 0 0 0 1px rgba(248, 113, 113, 0.25) inset; }
+    0%, 100% { box-shadow: 0 0 20px var(--danger-shadow), 0 0 0 1px var(--danger-border) inset; }
+    50% { box-shadow: 0 0 28px var(--danger-bg-confirm), 0 0 0 1px var(--danger-border-hover) inset; }
 }
 
 .btn--brand {
@@ -521,7 +478,7 @@ body {
 .section-toggle__icon {
     width: 16px;
     height: 16px;
-    color: var(--text-tertiary);
+    color: inherit;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
 }
 
@@ -565,6 +522,7 @@ body {
     font-weight: 600;
     border-right: 1px solid var(--border-faint);
     user-select: none;
+    word-break: break-all;
 }
 
 .data-table__value {
@@ -611,7 +569,7 @@ body {
 }
 
 .code-viewer__line:hover {
-    background: rgba(255, 255, 255, 0.015);
+    background: var(--bg-hover);
 }
 
 .code-viewer__gutter {
@@ -643,18 +601,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
+    min-height: 36px;
+    min-width: 36px;
+    padding: 6px;
     border: none;
     background: transparent;
     color: var(--text-tertiary);
     cursor: pointer;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background 0.2s ease;
 }
 
 .copy-btn:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--border-subtle);
 }
 
 /* ── Toast notification ─────────────────────────────────── */
@@ -708,6 +668,10 @@ body {
     justify-content: center;
     padding: 48px 24px;
     text-align: center;
+}
+
+.empty-state--spacious {
+    padding: 64px 24px;
 }
 
 .empty-state__icon {
@@ -764,7 +728,7 @@ a.data-link {
     text-decoration: underline;
     text-decoration-color: var(--link-underline);
     text-underline-offset: 2px;
-    transition: all 0.15s ease;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
 a.data-link:hover {
@@ -858,7 +822,7 @@ a.data-link:hover {
     letter-spacing: 0.08em;
     padding: 2px 8px;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--bg-hover-strong);
     border: 1px solid var(--border-subtle);
     color: var(--text-tertiary);
     text-transform: uppercase;
@@ -907,7 +871,7 @@ a.data-link:hover {
     background: var(--bg-interactive-subtle);
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -944,7 +908,7 @@ a.data-link:hover {
     border: 1px solid var(--border-subtle);
     background: var(--bg-code-data);
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    min-width: 0;
 }
 
 /* ── Detail view fade-in ────────────────────────────────── */
@@ -1008,10 +972,59 @@ a.data-link:hover {
     color: var(--brand-core);
 }
 
+.overview-value--subtle {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+/* ── Visually hidden (screen-reader only) ──────────────── */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Offline indicator ─────────────────────────────────── */
+
+.offline-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    border-radius: 10px;
+    color: var(--danger-text);
+    font-size: 0.78rem;
+    font-weight: 500;
+    animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.offline-banner__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--danger-core);
+    flex-shrink: 0;
+}
+
 /* ── Responsive ─────────────────────────────────────────── */
 
 @media (max-width: 1024px) {
     .bg-orb { opacity: 0.2; }
+
+    /* When panels stack vertically, cap the list so detail stays reachable */
+    .request-list-panel {
+        max-height: 50vh;
+    }
 }
 
 @media (max-width: 640px) {
@@ -1049,16 +1062,6 @@ a.data-link:hover {
         min-height: 44px;
         min-width: 44px;
         padding: 10px;
-    }
-
-    /* Header — more compact on mobile */
-    .glass-panel-header-compact {
-        padding: 20px;
-    }
-
-    /* L3: Footer status — visible on mobile, adapted layout */
-    .footer-status {
-        display: inline-flex;
     }
 
     /* Detail and list panels — tighter spacing on mobile */
