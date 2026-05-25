@@ -213,6 +213,29 @@ final class ApplicationTest extends TestCase
         $this->assertSame('/apiary', $payload['data']['path']);
     }
 
+    public function testHealthEndpointReturnsOk(): void
+    {
+        $app = new Application($this->databasePath);
+
+        $response = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/health',
+        ], '');
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $payload = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(['status' => 'ok'], $payload);
+
+        $listResponse = $app->handle([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/requests',
+        ], '');
+
+        $listPayload = json_decode($listResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(0, $listPayload['meta']['count']);
+    }
+
     public function testDefaultFilterIgnoresFaviconRequests(): void
     {
         $app = new Application($this->databasePath);

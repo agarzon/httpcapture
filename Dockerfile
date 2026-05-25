@@ -20,4 +20,7 @@ USER www-data
 
 EXPOSE 8080
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -fsS http://localhost:8080/api/health >/dev/null || exit 1
+
 CMD ["php", "-dopcache.enable=0", "-S", "0.0.0.0:8080", "-t", "public", "public/index.php"]

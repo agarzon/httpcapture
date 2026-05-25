@@ -65,6 +65,7 @@ final class Application
 
     private function registerRoutes(): void
     {
+        $this->router->add('GET', '/api/health', static fn (): Response => Response::json(['status' => 'ok'], 200));
         $this->router->add('GET', '/api/requests', fn (Request $request): Response => $this->requestsController->index($request));
         $this->router->add('GET', '/api/requests/poll', fn (Request $request): Response => $this->requestsController->poll($request));
         $this->router->add('GET', '/api/requests/{id}', fn (Request $request, array $params): Response => $this->requestsController->show($request, (int) $params['id']));
