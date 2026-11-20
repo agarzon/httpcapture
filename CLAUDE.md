@@ -17,7 +17,7 @@ docker compose exec app vendor/bin/phpunit --filter testMethodName
 
 ## Architecture
 
-httpcapture is a zero-dependency PHP 8.4 HTTP capture tool with a Vue 3 SPA frontend. Any request to a non-reserved path is stored in SQLite and displayed in real-time.
+httpcapture is a zero-dependency PHP 8.6 HTTP capture tool with a Vue 3 SPA frontend. Any request to a non-reserved path is stored in SQLite and displayed in real-time.
 
 **Request lifecycle:** `public/index.php` → `app.php` (wiring) → `Application::handle()` → Router matches or CaptureController stores.
 
